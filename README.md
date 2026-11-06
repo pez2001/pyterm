@@ -273,5 +273,3 @@ pyvterm is free software: you can redistribute it and/or modify it under the ter
 **GNU Lesser General Public License** as published by the Free Software Foundation, either version 3
 of the License, or (at your option) any later version (`LGPL-3.0-or-later`).
 See [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) (the GPL v3 it builds on).
-
-Plugins and themes you write for pyvterm are your own and can use any license you like.
