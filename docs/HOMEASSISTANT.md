@@ -4,9 +4,9 @@ Completely optional and **off by default**. Nothing is imported or sent unless y
 
 ```bash
 pip install paho-mqtt
-python pixelterm.py --mqtt mqtt://user:password@homeassistant.local:1883     # just this run
-python pixelterm.py --mqtt                                                    # use the mqtt: block of config.yaml
-python pixelterm.py --no-mqtt                                                 # off, even if config.yaml enables it
+python -m pyterm --mqtt mqtt://user:password@homeassistant.local:1883     # just this run
+python -m pyterm --mqtt                                                    # use the mqtt: block of config.yaml
+python -m pyterm --no-mqtt                                                 # off, even if config.yaml enables it
 ```
 
 or permanently in `config.yaml`:
@@ -16,7 +16,7 @@ mqtt:
   enabled: true
   host: homeassistant.local
   port: 1883            # mqtts://... or tls: true -> 8883
-  username: pixelterm
+  username: pyterm
   password: secret
   publish_text: false   # true = also send command lines and the last error line
   allow_control: true   # false = Home Assistant can only watch, not change anything
@@ -25,7 +25,7 @@ mqtt:
 ```
 
 With Home Assistant's MQTT integration (Mosquitto add-on) the terminal appears by itself under
-**Settings → Devices → "pixelterm <hostname>"** (MQTT discovery). Each computer is its own device
+**Settings → Devices → "pyterm <hostname>"** (MQTT discovery). Each computer is its own device
 (`device_id` defaults to the hostname).
 
 ## What Home Assistant gets
@@ -38,7 +38,7 @@ With Home Assistant's MQTT integration (Mosquitto add-on) the terminal appears b
 | `sensor.…_last_exit_code`, `…_last_command_duration` | |
 | `sensor.…_output_rate` | characters per second (every 5 s) |
 | `sensor.…_typing_speed`, `…_typing_speed_wpm` | your typing speed in characters per minute / words per minute (last 20 s, every 5 s) |
-| `sensor.…_keystrokes` | keys typed since pixelterm started (total, for daily statistics) |
+| `sensor.…_keystrokes` | keys typed since pyterm started (total, for daily statistics) |
 | `sensor.…_theme` | current theme |
 | `sensor.…_last_command`, `…_last_error` | **only with `publish_text: true`** – e.g. for a text display or printer |
 
@@ -52,12 +52,12 @@ docs/SHELL.md); output rate, user active, theme, error output and bell work with
 ## Troubleshooting
 
 ```bash
-python pixelterm.py --mqtt mqtt://user:pass@homeassistant.local --mqtt-debug
+python -m pyterm --mqtt mqtt://user:pass@homeassistant.local --mqtt-debug
 ```
 
-prints every message sent (`[mqtt] -> pixelterm/mypc/last_exit 1`) and received (`[mqtt] <- …/set/theme c64`).
+prints every message sent (`[mqtt] -> pyterm/mypc/last_exit 1`) and received (`[mqtt] <- …/set/theme c64`).
 If messages go out but Home Assistant shows nothing: check the MQTT integration has discovery enabled
-(prefix `homeassistant`), or look at the topics with MQTT Explorer / `mosquitto_sub -t 'pixelterm/#' -v`.
+(prefix `homeassistant`), or look at the topics with MQTT Explorer / `mosquitto_sub -t 'pyterm/#' -v`.
 
 ## What Home Assistant can change (`allow_control: true`)
 
@@ -96,7 +96,7 @@ Entities:
 | `binary_sensor` Alarm active, `sensor` Alarm | which alarm is running (`none`) |
 | events on `event.…_terminal_event` | `alarm_started`, `alarm_dismissed` (someone pressed a key – attribute `seconds` = reaction time), `alarm_finished` (ran out, nobody there), `alarm_stopped` (stopped from Home Assistant) |
 
-Raw topic `pixelterm/<device_id>/set/alarm` takes `doorbell`, `redalert Water in the basement!` or JSON
+Raw topic `pyterm/<device_id>/set/alarm` takes `doorbell`, `redalert Water in the basement!` or JSON
 `{"type": "timer", "message": "Pizza", "duration": 60, "sound": false}`.
 
 ```yaml
@@ -110,11 +110,11 @@ automation:
     actions:
       - action: mqtt.publish
         data:
-          topic: pixelterm/mypc/set/alarm
+          topic: pyterm/mypc/set/alarm
           payload: '{"type": "redalert", "message": "Water in the basement!", "duration": 120}'
       - wait_for_trigger:
           - trigger: state
-            entity_id: event.pixelterm_mypc_terminal_event
+            entity_id: event.pyterm_mypc_terminal_event
             attribute: event_type
             to: alarm_dismissed
         timeout: "00:00:30"
@@ -131,10 +131,10 @@ automation:
         to: "on"
     actions:
       - action: text.set_value
-        target: {entity_id: text.pixelterm_mypc_alarm_message}
+        target: {entity_id: text.pyterm_mypc_alarm_message}
         data: {value: "Someone is at the front door"}
       - action: button.press
-        target: {entity_id: button.pixelterm_mypc_alarm_doorbell}
+        target: {entity_id: button.pyterm_mypc_alarm_doorbell}
 ```
 
 ## Example automations
@@ -145,7 +145,7 @@ automation:
 - alias: Terminal error -> lights flash red
   triggers:
     - trigger: state
-      entity_id: event.pixelterm_mypc_terminal_event
+      entity_id: event.pyterm_mypc_terminal_event
   conditions:
     - "{{ trigger.to_state.attributes.event_type == 'command_failed' }}"
   actions:
@@ -172,7 +172,7 @@ automation:
 - alias: Terminal error -> text display
   triggers:
     - trigger: state
-      entity_id: event.pixelterm_mypc_terminal_event
+      entity_id: event.pyterm_mypc_terminal_event
   conditions:
     - "{{ trigger.to_state.attributes.event_type in ['command_failed', 'error_output'] }}"
   actions:
@@ -190,14 +190,14 @@ automation:
 - alias: Long terminal job -> receipt
   triggers:
     - trigger: state
-      entity_id: event.pixelterm_mypc_terminal_event
+      entity_id: event.pyterm_mypc_terminal_event
   conditions:
     - "{{ trigger.to_state.attributes.event_type == 'long_command' }}"
   actions:
     - action: notify.pos_printer        # your printer's notify service
       data:
         message: |
-          ======== PIXELTERM ========
+          ======== PYTERM ========
           {{ trigger.to_state.attributes.command }}
           {{ 'OK' if trigger.to_state.attributes.ok else 'FAILED (exit ' ~ trigger.to_state.attributes.exit_code ~ ')' }}
           took {{ trigger.to_state.attributes.duration | round(0) }} s
@@ -211,21 +211,21 @@ automation:
   triggers: [{trigger: state, entity_id: binary_sensor.doorbell, to: 'on'}]
   actions:
     - action: text.set_value
-      target: {entity_id: text.pixelterm_mypc_show_message}
+      target: {entity_id: text.pyterm_mypc_show_message}
       data: {value: "Someone is at the door!"}
 
 - alias: Sunset -> cozy terminal
   triggers: [{trigger: sun, event: sunset}]
   actions:
     - action: select.select_option
-      target: {entity_id: select.pixelterm_mypc_theme_select}
+      target: {entity_id: select.pyterm_mypc_theme_select}
       data: {option: neonsigns}
 
 - alias: Dinner -> scroller
   triggers: [{trigger: state, entity_id: input_boolean.dinner_ready, to: 'on'}]
   actions:
     - action: text.set_value
-      target: {entity_id: text.pixelterm_mypc_scroller_text}
+      target: {entity_id: text.pyterm_mypc_scroller_text}
       data: {value: "dinner is ready - come downstairs"}
 ```
 
@@ -233,7 +233,7 @@ Entity ids follow the device name; check them under the device page in Home Assi
 
 ## Raw MQTT (Node-RED, scripts …)
 
-Base topic `pixelterm/<device_id>/`:
+Base topic `pyterm/<device_id>/`:
 
 | topic | |
 |---|---|
@@ -245,7 +245,7 @@ Base topic `pixelterm/<device_id>/`:
 | `alarm`, `alarm_active`, `alarm_message`, `alarm_duration` / `set/alarm`, `set/alarm_stop` | alarms (see above) |
 
 ```bash
-mosquitto_pub -h homeassistant.local -t pixelterm/mypc/set/theme -m c64
-mosquitto_pub -h homeassistant.local -t pixelterm/mypc/set/notify -m "coffee is ready"
-mosquitto_sub -h homeassistant.local -t 'pixelterm/+/event' -v
+mosquitto_pub -h homeassistant.local -t pyterm/mypc/set/theme -m c64
+mosquitto_pub -h homeassistant.local -t pyterm/mypc/set/notify -m "coffee is ready"
+mosquitto_sub -h homeassistant.local -t 'pyterm/+/event' -v
 ```

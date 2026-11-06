@@ -7,3 +7,6 @@ showcase.mp4
 *.cast
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
