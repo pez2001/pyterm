@@ -27,7 +27,7 @@ CP437_LOW = '\u0000☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§
 CP437 = [CP437_LOW[i] if i < 32 else ('⌂' if i == 127 else bytes([i]).decode('cp437')) for i in range(256)]
 UNI_TO_CP437 = {c: i for i, c in enumerate(CP437)}
 
-FONT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'fonts')
+FONT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'fonts')
 
 _MONO_SYS = ['dejavusansmono', 'consolas', 'cascadiamono', 'lucidaconsole', 'couriernew',
              'liberationmono', 'menlo', 'ubuntumono', 'notosansmono', 'freemono', 'monospace']

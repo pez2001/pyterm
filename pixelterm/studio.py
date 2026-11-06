@@ -856,7 +856,7 @@ class Studio:
             open_in_editor(pm.dirs[0])
         ui.newline()
         if ui.button('Docs (PLUGINS.md)'):
-            open_in_editor(os.path.join(themes.ROOT, 'docs', 'PLUGINS.md'))
+            open_in_editor('https://github.com/pez2001/pyvterm/blob/main/docs/PLUGINS.md')
         ui.newline()
         ui.header('INSTALLED')
         for path, p in sorted(pm.plugins.items(), key=lambda kv: kv[1].name):

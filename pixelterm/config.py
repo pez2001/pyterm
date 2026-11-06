@@ -7,7 +7,7 @@ import sys
 
 from . import yamlio
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')   # bundled assets (themes, fonts, sounds, plugins, shell, config.yaml)
 
 DEFAULTS = {
     'theme': 'neon',

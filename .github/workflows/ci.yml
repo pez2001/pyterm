@@ -33,7 +33,7 @@ jobs:
         run: |
           python - <<'PY'
           import glob, yaml
-          for f in ['config.yaml', *glob.glob('themes/*.yaml')]:
+          for f in ['pixelterm/data/config.yaml', *glob.glob('pixelterm/data/themes/*.yaml')]:
               yaml.safe_load(open(f, encoding='utf-8'))
               print('ok', f)
           PY

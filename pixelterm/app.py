@@ -11,7 +11,6 @@ import pygame
 
 from . import backgrounds, effects, fonts, signals, themes, vt
 from .backend import FileSource, ScriptSource, create_backend, default_shell
-from .config import ROOT
 from .keys import key_to_seq, mouse_seq
 from .pane import Pane
 from .plugins import PluginManager
@@ -838,7 +837,7 @@ class App:
         elif k == K.K_x:
             self.screenshot()
         elif k == K.K_r:
-            on, p = pane.toggle_cast(os.path.join(ROOT, 'recordings'))
+            on, p = pane.toggle_cast(os.path.join(os.getcwd(), 'recordings'))
             self.notify(('REC ● asciinema cast (Ctrl+Shift+R stops)' if on else 'cast saved: %s' % os.path.basename(p)))
         elif k == K.K_g:
             self.toggle_video('mp4')
@@ -881,7 +880,7 @@ class App:
 
     # ------------------------------------------------------------ capture
     def screenshot(self):
-        d = os.path.join(ROOT, 'screenshots')
+        d = os.path.join(os.getcwd(), 'screenshots')
         os.makedirs(d, exist_ok=True)
         p = os.path.join(d, time.strftime('pixelterm-%Y%m%d-%H%M%S.png'))
         pygame.image.save(self.presenter.screenshot(), p)
@@ -910,7 +909,7 @@ class App:
         if self.video:
             self.stop_video()
             return
-        d = os.path.join(ROOT, 'recordings')
+        d = os.path.join(os.getcwd(), 'recordings')
         os.makedirs(d, exist_ok=True)
         self.start_video(os.path.join(d, time.strftime('pixelterm-%Y%m%d-%H%M%S.') + fmt))
 

@@ -13,7 +13,7 @@ import pygame
 
 SR = 22050
 PENTA = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21]
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')   # bundled assets (themes, fonts, sounds, plugins, shell, config.yaml)
 
 
 def _env(n, attack=0.004, decay=6.0):

@@ -25,7 +25,7 @@ The user is on Windows (PowerShell), window ~1600x1000.
 - `fonts.py` – builtin pixel fonts (`builtin:*`), colored fonts, TTF; `cursors.py`; `splash.py`; `scroller.py`
 - `mqtt.py` – optional MQTT/Home Assistant bridge (discovery, sensors, selects, alarms); never types into the terminal
 - `alarms.py` – Alarm base class + redalert/warning/doorbell/timer/calm; `plugins.py` – PluginAPI (`register_*`)
-- `themes/*.yaml` – themes; `config.yaml` – global config (CLI overrides); `plugins/*.py` – hot-reloaded plugins
+- `pixelterm/data/` – bundled assets: `themes/*.yaml`, `fonts/`, `sounds/`, `shell/`, `config.yaml` (global config, CLI overrides), `plugins/*.py` (hot-reloaded). Screenshots/recordings go to the current directory.
 - docs/: THEMES, PLUGINS, FONTS, CURSORS, SHELL, HOMEASSISTANT
 
 ## Conventions

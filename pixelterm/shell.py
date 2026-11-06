@@ -6,7 +6,7 @@ from __future__ import annotations
 import os
 import shlex
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')   # bundled assets (themes, fonts, sounds, plugins, shell, config.yaml)
 SHELL_DIR = os.path.join(ROOT, 'shell')
 
 

@@ -22,7 +22,7 @@ import time
 import traceback
 
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')   # bundled assets (themes, fonts, sounds, plugins, shell, config.yaml)
 EVENTS = ('frame', 'draw', 'draw_under', 'post', 'key', 'output', 'put', 'del', 'bell', 'theme', 'command',
           'command_done', 'alarm', 'alarm_end')
 
