@@ -1,4 +1,4 @@
-# pyvterm theme - every key is optional, see docs/THEMES.md
+# pixelterm theme - every key is optional, see docs/THEMES.md
 name: neon
 description: plasma glow, burning letters, bloom - the default overkill
 palette: ['#101018', '#ff3b6b', '#3bff8f', '#ffd23b', '#3b8bff', '#c23bff', '#3bf0ff', '#d8dce8',

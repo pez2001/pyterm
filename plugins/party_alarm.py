@@ -1,5 +1,5 @@
 """Example: a custom alarm. Shows up in Home Assistant as the button "Alarm party" and works with
-mqtt  pyvterm/<device>/set/alarm  "party Dinner is ready"  and the demo shell:  alarm party hello
+mqtt  pixelterm/<device>/set/alarm  "party Dinner is ready"  and the demo shell:  alarm party hello
 
 An alarm = sound() returning (pygame Sound, repeat seconds) + draw(surf, app) on top of everything.
 """
@@ -8,7 +8,7 @@ import random
 
 import numpy as np
 
-from pyvterm.alarms import Alarm
+from pixelterm.alarms import Alarm
 
 NAME = 'party_alarm'
 

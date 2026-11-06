@@ -10,9 +10,9 @@ PLUGIN = {'name': 'example_effect', 'description': 'adds letter fx "spiral", del
 
 
 def register(api):
-    from pyvterm import particles as P
-    from pyvterm.backgrounds import Background
-    from pyvterm.effects import Appear
+    from pixelterm import particles as P
+    from pixelterm.backgrounds import Background
+    from pixelterm.effects import Appear
 
     class Spiral(Appear):
         """pixels spiral in from a ring around the letter"""

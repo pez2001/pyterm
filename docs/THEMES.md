@@ -1,6 +1,6 @@
 # Themes
 
-A theme is a YAML file in `themes/` (or `%APPDATA%\pyvterm\themes`, `~/.config/pyvterm/themes`).
+A theme is a YAML file in `themes/` (or `%APPDATA%\pixelterm\themes`, `~/.config/pixelterm/themes`).
 Every key is optional; missing keys use the defaults below. Saved files are **hot-reloaded**,
 and the Studio (Ctrl+Shift+F12) edits all of this live and writes it back to YAML.
 
@@ -12,7 +12,7 @@ fg: '#d0d0d0'                          # default text color
 bg: '#000000'                          # default background
 bg_alpha: 255                          # 0 = text cells see-through to the background effect
 cell_bg_alpha: 170                     # cells with their own bg color (mc, htop, powerline); default 170 when bg_alpha < 255, else 255
-splash: demo                           # boot sequence: demo | c64 | c64_clean | none (+plugins, see pyvterm/splash.py)
+splash: demo                           # boot sequence: demo | c64 | c64_clean | none (+plugins, see pixelterm/splash.py)
 command_blocks: true                   # false = no command gutter / separator lines in this theme
 screen: null                           # fixed text grid like the original machine, e.g. C64:
                                        #   {cols: 40, rows: 25, border: [32, 36]}  (320x200 inside 384x272, scaled to fit)

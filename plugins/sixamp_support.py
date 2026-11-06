@@ -1,6 +1,6 @@
 """sixamp_support - exact pointer and cell size for SIXAMP (and other full-screen Sixel programs).
 
-What used to live here is now built into pyvterm itself:
+What used to live here is now built into pixelterm itself:
   * sixels on the alternate screen paint into one screen-sized layer (vt.Screen.paint_sixel)
   * after a font / scale / size change that layer is dropped and sixels are ignored for 0.15 s
   * XTWINOPS size reports CSI 14 t / 16 t / 18 t
@@ -10,9 +10,9 @@ This plugin only adds the SIXAMP-specific part: ConPTY carries whole cells only 
 queries, so the live cell size and the exact pointer position are published in shared memory.
 
 The first tab starts before plugins load, so the memory has a fixed name rather than one passed
-down in the environment: tagname 'pyvterm_sixamp_share' on Windows, and the file
-pyvterm_sixamp_share_<uid> in the temp folder elsewhere. Only the focused window writes the
-cell size, so several pyvterm windows do not fight over it.
+down in the environment: tagname 'pixelterm_sixamp_share' on Windows, and the file
+pixelterm_sixamp_share_<uid> in the temp folder elsewhere. Only the focused window writes the
+cell size, so several pixelterm windows do not fight over it.
 
 Layout of the 20 shared bytes: b'PVTM', pointer x, pointer y, cell width, cell height (int32).
 Pointer and cell are in window pixels, relative to the text area of the pane under the pointer.
@@ -33,9 +33,9 @@ S = {'mem': None, 'pos': None}
 
 def open_share():
     if os.name == 'nt':
-        mem = mmap.mmap(-1, 20, tagname='pyvterm_sixamp_share')
+        mem = mmap.mmap(-1, 20, tagname='pixelterm_sixamp_share')
     else:
-        path = os.path.join(tempfile.gettempdir(), 'pyvterm_sixamp_share_%d' % os.getuid())
+        path = os.path.join(tempfile.gettempdir(), 'pixelterm_sixamp_share_%d' % os.getuid())
         fd = os.open(path, os.O_RDWR | os.O_CREAT | getattr(os, 'O_NOFOLLOW', 0), 0o600)
         os.ftruncate(fd, 20)
         mem = mmap.mmap(fd, 20)

@@ -20,7 +20,7 @@ GHOST = [".WWW.",
 
 
 def register(api):
-    from pyvterm.cursors import CursorEffect, CursorStyle
+    from pixelterm.cursors import CursorEffect, CursorStyle
 
     class Ghost(CursorStyle):
         """bobs up and down, glides to the cursor, blushes when you type"""

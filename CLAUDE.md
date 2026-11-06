@@ -1,18 +1,18 @@
-# pyvterm – notes for Claude Code
+# pixelterm – notes for Claude Code
 
 Pixel-art "overkill" terminal emulator in Python + pygame-ce (Windows via pywinpty/ConPTY, Linux via pty).
 Oldschool demoscene look: themes, letter/delete effects, background scenes, splashes, plugins.
 The user is on Windows (PowerShell), window ~1600x1000.
 
 ## Run / test
-- `python pyvterm.py` (or `run.bat`), `--demo` = built-in fake shell (no real shell, good for tests)
+- `python pixelterm.py` (or `run.bat`), `--demo` = built-in fake shell (no real shell, good for tests)
 - Useful flags: `-t THEME`, `--size 1280x720`, `--random`, `--mqtt URL --mqtt-debug`, `--alt-effects`, `--splash`
 - Headless check: set `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy`, build `App(*build_config([...,'--demo','--gpu','false']))`,
   call `app.frame(1/30)` in a loop, save `app.presenter.frame_surface()` with `pygame.image.save`.
   Set `App._demo_used = True` and `cfg['intro'] = False` to skip the splash.
 - Demo shell commands: `help`, `themes`, `effects`, `bgs`, `cursors`, `splash NAME`, `alarm NAME msg`, `sixel`, `info` …
 
-## Layout (pyvterm/)
+## Layout (pixelterm/)
 - `app.py` – App: window, event loop (eco mode = no render when idle; `anim_until` forces frames), layout
   (fixed grid themes: `screen: {cols, rows, border}`), overlays, hotkeys, demo commands, alarms (`trigger_alarm`)
 - `pane.py` – one terminal: backend IO, vt events → effects, cursor, clipboard (OSC 52), full-screen app effect mode

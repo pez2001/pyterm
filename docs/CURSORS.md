@@ -1,6 +1,6 @@
 # Cursors
 
-The cursor is two kinds of pluggable classes (`pyvterm/cursors.py`):
+The cursor is two kinds of pluggable classes (`pixelterm/cursors.py`):
 
 * **one style**: draws the cursor itself
 * **any number of effects**: decorate it, emit particles, react to typing
@@ -50,7 +50,7 @@ Plugin `cursor_demo.py` adds the style `ghost` and the effect `comet`.
 ## Writing your own
 
 ```python
-from pyvterm.cursors import CursorStyle, CursorEffect
+from pixelterm.cursors import CursorStyle, CursorEffect
 
 class Box(CursorStyle):
     character = False                  # True: sprite-like (outlined when unfocused, hidden in vim unless alt_miner)

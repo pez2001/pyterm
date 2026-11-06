@@ -14,7 +14,7 @@ OK = re.compile(r'(?i)\b(all tests passed|success(fully)?|build succeeded|\d+ pa
 
 def register(api):
     import pygame
-    from pyvterm import particles as P
+    from pixelterm import particles as P
 
     def launch(n=5):
         cw, ch = api.cell

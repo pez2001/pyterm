@@ -30,4 +30,4 @@ palette_lock:               # every color snaps to the 16 C64 colors (no ditheri
 command_blocks: false        # no gutter / separator lines from shell integration
 crt: {scanlines: 0, vignette: 0, bloom: 0, phosphor: 0, flicker: 0, noise: 0, glitch: 0, aberration: 0, curvature: 0, interlace: 0}
 sound: {pack: 'off', volume: 0}
-banner: "\n PYVTERM 64  V1.0   (C) 2026 THE SCENE\n\nREADY.\n"
+banner: "\n PIXELTERM 64  V1.0   (C) 2026 THE SCENE\n\nREADY.\n"

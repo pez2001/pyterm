@@ -20,4 +20,4 @@ delete_effect: none
 bg_params: {c64load: {stripes: calm}}     # calm | authentic | off
 crt: {scanlines: 0.3, vignette: 0.35, bloom: 0.25}
 sound: {pack: 8bit, volume: 0.3}
-banner: "\n    **** COMMODORE 64 BASIC V2 ****\n 64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\nLOAD\"PYVTERM\",8,1\n\nSEARCHING FOR PYVTERM\nLOADING\n\n"
+banner: "\n    **** COMMODORE 64 BASIC V2 ****\n 64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\nLOAD\"PIXELTERM\",8,1\n\nSEARCHING FOR PIXELTERM\nLOADING\n\n"

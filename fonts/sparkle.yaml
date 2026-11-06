@@ -1,4 +1,4 @@
-# pyvterm animated font - one PNG sheet per frame (16x16 CP437 grid)
+# pixelterm animated font - one PNG sheet per frame (16x16 CP437 grid)
 name: sparkle
 type: animated
 fps: 6.0

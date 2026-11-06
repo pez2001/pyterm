@@ -23,4 +23,4 @@ palette_lock:
            '#6f4f25', '#433900', '#9a6759', '#444444', '#6c6c6c', '#9ad284', '#6c5eb5', '#959595']
 crt: {scanlines: 0.25, vignette: 0.35, bloom: 0.25}
 sound: {pack: 8bit, volume: 0.3}
-banner: "\n PYVTERM 64  V1.0   (C) 2026 THE SCENE\n\nREADY.\n"
+banner: "\n PIXELTERM 64  V1.0   (C) 2026 THE SCENE\n\nREADY.\n"

@@ -1,6 +1,6 @@
 # Shell integration (command blocks)
 
-pyvterm understands the FinalTerm / VS Code / Windows Terminal escape codes:
+pixelterm understands the FinalTerm / VS Code / Windows Terminal escape codes:
 
 | sequence | meaning |
 |---|---|
@@ -17,20 +17,20 @@ With them you get:
 * a faint separator above every prompt
 * **Ctrl+Shift+Up/Down** jumps between prompts in the scrollback
 * **Ctrl+Shift+A** copies the output of the last finished command
-* a notification (+ sound, + flash when pyvterm is in the background) when a command took longer than
+* a notification (+ sound, + flash when pixelterm is in the background) when a command took longer than
   `notify_after` seconds; plugins get a `command_done(exit_code, seconds, cmdline)` event
   (the fireworks plugin celebrates successful long builds)
 * new tabs / splits open in the directory of the focused pane
 
 ## Setup
 
-pyvterm injects it automatically when the shell is started by its bare name (`shell_integration: true`):
+pixelterm injects it automatically when the shell is started by its bare name (`shell_integration: true`):
 
-* **PowerShell 5.1 / 7** — dot-sources `shell/pyvterm.ps1` (wraps your existing prompt; uses PSReadLine for the
+* **PowerShell 5.1 / 7** — dot-sources `shell/pixelterm.ps1` (wraps your existing prompt; uses PSReadLine for the
   "command executed" mark)
-* **bash** — starts with `--rcfile shell/pyvterm.bash`, which sources your `~/.bashrc` first
+* **bash** — starts with `--rcfile shell/pixelterm.bash`, which sources your `~/.bashrc` first
 * **cmd.exe** — sets a `PROMPT` with the marks (no exit codes in cmd)
-* **zsh** — add to `~/.zshrc`:  `[[ "$TERM_PROGRAM" == pyvterm ]] && source /path/to/pyvterm/shell/pyvterm.zsh`
+* **zsh** — add to `~/.zshrc`:  `[[ "$TERM_PROGRAM" == pixelterm ]] && source /path/to/pixelterm/shell/pixelterm.zsh`
 
 Your own prompt themes (oh-my-posh, starship …) keep working: the scripts wrap whatever prompt is defined.
 The demo shell (`--demo`) emits the marks too, so you can try it without setup (`error`, `sleep 9`).

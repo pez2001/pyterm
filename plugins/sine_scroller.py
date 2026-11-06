@@ -6,13 +6,13 @@ fonts: builtin:scroller | builtin:scrollergold | builtin:scrollerice | builtin:a
 
 PLUGIN = {'name': 'sine_scroller', 'description': 'big Amiga-font sine scroller (Ctrl+Shift+Z)'}
 
-TEXT = ('      PYVTERM   ***   THE PIXEL ART OVERKILL TERMINAL   ***   GREETINGS TO THE SCENE, THE ANSI ARTISTS '
+TEXT = ('      PIXELTERM   ***   THE PIXEL ART OVERKILL TERMINAL   ***   GREETINGS TO THE SCENE, THE ANSI ARTISTS '
         'AND EVERYONE STILL TYPING IN A TERMINAL IN 2026   ***   CTRL+SHIFT+H FOR HELP   ***   ')
 S = {'on': None, 'sc': None, 'key': None}
 
 
 def register(api):
-    from pyvterm.scroller import SineScroller
+    from pixelterm.scroller import SineScroller
 
     def enabled():
         return S['on'] if S['on'] is not None else bool(api.settings.get('enabled'))

@@ -19,5 +19,5 @@ letter_effect: drop
 delete_effect: bricks
 crt: {scanlines: 0.3, vignette: 0.45, bloom: 0.35}
 sound: {pack: 8bit, volume: 0.3}
-banner: "\n  PYVTERM PRESENTS\n  A DEMO-STYLE TERMINAL\n\n"
+banner: "\n  PIXELTERM PRESENTS\n  A DEMO-STYLE TERMINAL\n\n"
 plugins: {sine_scroller: {enabled: true}}

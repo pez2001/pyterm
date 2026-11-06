@@ -1,2 +1,2 @@
 #!/bin/sh
-cd "$(dirname "$0")" && exec python3 pyvterm.py "$@"
+cd "$(dirname "$0")" && exec python3 pixelterm.py "$@"

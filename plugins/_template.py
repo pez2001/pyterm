@@ -5,7 +5,7 @@ Saved changes are hot-reloaded instantly. Errors appear in the Studio
 API reference: docs/PLUGINS.md
 """
 
-PLUGIN = {'name': 'my_plugin', 'description': 'a fresh pyvterm plugin', 'author': 'you'}
+PLUGIN = {'name': 'my_plugin', 'description': 'a fresh pixelterm plugin', 'author': 'you'}
 
 state = {'t': 0.0}
 
@@ -26,7 +26,7 @@ def register(api):
     api.add_hotkey('y', hello, 'say hello')      # Ctrl+Shift+Y
     # api.animating(True)   # uncomment if you draw something that moves every frame
     # custom cursor style / cursor effect - see plugins/cursor_demo.py:
-    #   from pyvterm.cursors import CursorStyle, CursorEffect
+    #   from pixelterm.cursors import CursorStyle, CursorEffect
     #   api.register_cursor('mycursor', MyCursor); api.register_cursor_effect('myfx', MyFx)
     # api.on('command_done', lambda exit_code, seconds, cmd: api.notify('%s -> %s' % (cmd, exit_code)))
 

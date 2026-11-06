@@ -7,8 +7,8 @@ os.environ.setdefault('SDL_AUDIODRIVER', 'dummy')
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 import pygame  # noqa: E402
-from pyvterm.app import App  # noqa: E402
-from pyvterm.config import build_config  # noqa: E402
+from pixelterm.app import App  # noqa: E402
+from pixelterm.config import build_config  # noqa: E402
 
 
 def main():
