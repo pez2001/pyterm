@@ -1,0 +1,13 @@
+name: zen
+description: clean, crisp, zero effects - for long work sessions (TTF font)
+fg: '#d4d4d4'
+bg: '#1e1e1e'
+cursor: '#aeafad'
+cursor_effects: []
+font: sys:consolas
+font_size: 17
+scale: 1
+border: 8
+letter_effect: none
+delete_effect: none
+sound: {pack: 'off'}

@@ -1,0 +1,17 @@
+name: weather
+description: live weather outside your window (Open-Meteo) - sky, sun/moon, clouds, rain, snow, fog, thunderstorms
+fg: '#f0f6ff'
+bg: '#000000'
+bg_alpha: 70
+cursor: '#ffd36b'
+cursor_effects: [glow, sparkle]
+text_shadow: true
+font: builtin
+scale: 2
+background: [weather]
+bg_dim: 0.75
+bg_params: {weather: {location: auto, refresh_min: 10}}
+letter_effect: fluid
+delete_effect: melt
+crt: {vignette: 0.35, bloom: 0.3}
+sound: {pack: glass, volume: 0.3}

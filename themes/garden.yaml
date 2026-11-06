@@ -1,0 +1,22 @@
+name: garden
+description: "tiny garden on your clock - every letter you type is a seed that drops into the soil and slowly grows into a flower; bees visit the blossoms and a butterfly flutters by in daylight, fireflies glow at night"
+palette: ['#20301a', '#e85a6a', '#5ab04a', '#e8c040', '#5a8ad0', '#b070d0', '#4ab0b0', '#f4f0e0',
+          '#607050', '#ff8a96', '#8ad87a', '#ffe07a', '#8ab4f0', '#d0a0f0', '#7ad8d8', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffe07a'
+cursor_style: underline
+cursor_effects: [sparkle]
+cursor_params: {sparkle: {rate: 3, color: '#fff0a0'}}
+text_shadow: true
+font: builtin:cute
+scale: 3
+border: 6
+background: [garden]
+bg_dim: 0.9
+letter_effect: pop
+delete_effect: dust
+crt: {vignette: 0.3}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  plant a few words and watch them bloom\n\n"

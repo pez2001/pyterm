@@ -1,0 +1,21 @@
+name: spacestation
+description: "cockpit window - stars stream by at warp speed driven by your output, planets drift past, every letter you type fires a laser at the asteroids; a failed command sounds the red alert and shakes the hull; HUD with speed, hull, hits and clock"
+palette: ['#02020a', '#ff4a5a', '#3cff9a', '#ffd23c', '#3c8cff', '#c84aff', '#3cf0ff', '#d6ffe8',
+          '#2a3040', '#ff7a8a', '#7affb8', '#ffe67a', '#7ab0ff', '#e07aff', '#7af6ff', '#ffffff']
+fg: '#c8ffe0'
+bg: '#02020a'
+bg_alpha: 0
+cursor: '#3cff9a'
+cursor_style: block
+cursor_effects: [glow]
+text_shadow: true
+font: builtin:thin8
+scale: 3
+border: 6
+background: [spacestation]
+bg_dim: 0.85
+letter_effect: laser
+delete_effect: shatter
+crt: {scanlines: 0.25, vignette: 0.5, bloom: 0.45, aberration: 1}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n  [ BRIDGE ONLINE ]  all systems nominal\n\n"

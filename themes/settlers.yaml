@@ -1,0 +1,21 @@
+name: settlers
+description: "a busy little economy - carriers haul logs, stone, fish, wheat, flour and bread along roads between flags; woodcutter and forester keep the forest alive; every successful command founds a new building"
+palette: ['#2a2018', '#c04830', '#4c9a3a', '#d8b048', '#3c68b0', '#a05a9a', '#3c9aa8', '#f4ecd8',
+          '#7a6a58', '#e07058', '#78c868', '#f0d878', '#78a0e0', '#d090c8', '#78c8d8', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#e0c050'
+cursor_style: settler
+cursor_effects: []
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [settlers]
+bg_dim: 0.8
+letter_effect: construction
+delete_effect: dust
+crt: {vignette: 0.3}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  ⚒  The settlement grows with every command.\n\n"

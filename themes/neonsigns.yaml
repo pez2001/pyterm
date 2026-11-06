@@ -1,0 +1,22 @@
+name: neonsigns
+description: "rainy back alley full of buzzing neon signs mirrored in the wet ground - letters flicker on like tubes, deleted ones short-circuit in sparks; signs brighten with output, flash on BEL, spark out when a command fails, chase when a long one succeeds"
+palette: ['#0c0814', '#ff2878', '#40ff90', '#ffdc3c', '#5078ff', '#c850ff', '#3ce6ff', '#f0e6ff',
+          '#4a3a5a', '#ff6aa0', '#80ffb8', '#fff07a', '#8aa8ff', '#e090ff', '#90f4ff', '#ffffff']
+fg: '#ffe6fa'
+bg: '#08040e'
+bg_alpha: 70
+cursor: '#3ce6ff'
+cursor_style: beam
+cursor_effects: [glow, sparkle]
+cursor_params: {glow: {strength: 1.1}}
+text_shadow: true
+font: builtin:thin8
+scale: 3
+border: 6
+background: [neonsigns]
+bg_dim: 0.8
+letter_effect: neon
+delete_effect: spark
+crt: {scanlines: 0.15, vignette: 0.55, bloom: 0.85, aberration: 1, flicker: 0.02}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  ~ open all night ~\n\n"

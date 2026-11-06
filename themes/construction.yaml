@@ -1,0 +1,14 @@
+name: construction
+description: tiny cranes build every letter brick by brick over metaballs
+fg: '#ffe9b0'
+bg: '#060a12'
+bg_alpha: 150
+cursor: '#ffc400'
+text_shadow: true
+font: builtin
+background: [metaballs]
+bg_dim: 0.35
+letter_effect: construction
+delete_effect: melt
+crt: {scanlines: 0.25, vignette: 0.5, bloom: 0.45}
+sound: {pack: 8bit, volume: 0.25}

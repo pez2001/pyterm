@@ -1,0 +1,9 @@
+pygame-ce>=2.4
+numpy>=1.21
+pyyaml>=6.0
+pywinpty>=2.0; sys_platform == "win32"
+# video export (MP4/GIF): ships an ffmpeg binary - optional but recommended
+imageio-ffmpeg>=0.4
+pillow>=9.0
+# MQTT / Home Assistant integration - optional, only needed with --mqtt or mqtt: {enabled: true}
+# paho-mqtt>=1.6

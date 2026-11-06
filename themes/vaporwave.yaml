@@ -1,0 +1,17 @@
+name: vaporwave
+description: Ａｅｓｔｈｅｔｉｃ - synthwave grid, sun & teleporting letters
+palette: ['#1a0a2a', '#ff2a8a', '#2affd0', '#ffe14a', '#5a6aff', '#c42aff', '#2ad0ff', '#f0e0ff',
+          '#4a2a6a', '#ff6ab0', '#7affe0', '#fff07a', '#8a9aff', '#e07aff', '#7ae8ff', '#ffffff']
+fg: '#f0e0ff'
+bg: '#0a0014'
+bg_alpha: 120
+cursor: '#2affd0'
+cursor_effects: [glow, trail, ripple]
+text_shadow: true
+font: builtin
+background: [grid]
+bg_dim: 0.55
+letter_effect: teleport
+delete_effect: dust
+crt: {scanlines: 0.35, vignette: 0.6, bloom: 0.7, aberration: 2, noise: 0.15}
+sound: {pack: glass, volume: 0.3}

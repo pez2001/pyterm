@@ -1,0 +1,21 @@
+name: autumn
+description: "golden autumn afternoon - maple trees shed red, orange and yellow leaves that flutter down and pile up on the ground; the wind picks up with your output, Enter sends a gust, the letters you type fall as leaves, a squirrel scurries by"
+palette: ['#2a1a10', '#d84a2a', '#8aa040', '#e8a030', '#5a7ab0', '#a05a8a', '#5a9a9a', '#fff0dc',
+          '#6a5040', '#f07a5a', '#b0c870', '#ffc860', '#8aa4d0', '#c88ab0', '#8ac0c0', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffc860'
+cursor_style: underline
+cursor_effects: [glow]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [autumn]
+bg_dim: 0.9
+letter_effect: drop
+delete_effect: leaves
+crt: {vignette: 0.35, bloom: 0.25}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  ~ autumn leaves ~\n\n"

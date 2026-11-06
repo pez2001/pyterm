@@ -1,0 +1,21 @@
+name: pinball
+description: "pinball table - the ball bounces off your actual text and lights up the letters it hits, bumpers flash, Enter fires the flippers, every typed letter scores"
+palette: ['#0a0618', '#ff3c8c', '#3cff8c', '#ffd23c', '#5a6aff', '#c83cff', '#3ce0ff', '#f0e6ff',
+          '#3a2a5a', '#ff7ab0', '#7affb0', '#ffe67a', '#8a9aff', '#e07aff', '#7af0ff', '#ffffff']
+fg: '#f0e6ff'
+bg: '#0a0618'
+bg_alpha: 0
+cursor: '#ffd23c'
+cursor_style: block
+cursor_effects: [glow]
+text_shadow: true
+font: builtin:fat8
+scale: 3
+border: 6
+background: [pinball]
+bg_dim: 0.9
+letter_effect: pop
+delete_effect: rainbow
+crt: {scanlines: 0.2, vignette: 0.4, bloom: 0.5}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n  INSERT COIN  -  PRESS ENTER TO FLIP\n\n"

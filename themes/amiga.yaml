@@ -1,0 +1,22 @@
+name: amiga
+description: workbench blue & orange, topaz-style font, bouncing boing ball, copper bars
+palette: ['#000022', '#ff4422', '#55cc44', '#ff8800', '#0055aa', '#cc44cc', '#44aacc', '#ffffff',
+          '#556677', '#ff7755', '#88ee77', '#ffaa44', '#3388dd', '#ee77ee', '#77ccee', '#ffffff']
+fg: '#ffffff'
+bg: '#0055aa'
+bg_alpha: 190
+cursor: '#ff8800'
+cursor_effects: []
+text_shadow: false
+font: builtin:topaz
+scale: 2
+border: 8
+border_solid: true
+border_color: '#0055aa'
+background: [boing]
+bg_dim: 0.85
+letter_effect: dissolve
+delete_effect: dust
+crt: {scanlines: 0.3, vignette: 0.4, bloom: 0.35}
+sound: {pack: glass, volume: 0.3}
+banner: "Workbench-style terminal - release 1.3 vibes\n512K chip ram, 0 fast ram, infinite nostalgia\n\n"

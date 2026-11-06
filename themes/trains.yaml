@@ -1,0 +1,21 @@
+name: trains
+description: "cute steam railway - trains chuff past the station, pick up passengers, cross the bridge and vanish into the tunnel; the cursor is a tiny locomotive puffing smoke while you type"
+palette: ['#202020', '#d04040', '#40a050', '#e0b040', '#4070c0', '#a060b0', '#40a0b0', '#f0ece0',
+          '#707070', '#f07070', '#70d080', '#ffe080', '#80a8f0', '#d090e0', '#80d8e0', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#e04040'
+cursor_style: train
+cursor_effects: []
+text_shadow: true
+font: builtin:fat8
+scale: 3
+border: 6
+background: [railway]
+bg_dim: 0.85
+letter_effect: puff
+delete_effect: dust
+crt: {scanlines: 0.1, vignette: 0.25}
+sound: {pack: chime, volume: 0.3}
+banner: "\n  🚂 ALL ABOARD!   next stop: your prompt\n\n"

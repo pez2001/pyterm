@@ -1,0 +1,61 @@
+# pyvterm global config - command line flags override these.
+# A second config.yaml in %APPDATA%\pyvterm (Windows) or ~/.config/pyvterm (Linux) overrides this one.
+theme: neon
+# font: builtin            # builtin | sys:Consolas | fonts/x.ttf ...  (overrides the theme font)
+# font_size: 18
+# scale: 2                 # pixel scale
+width: 1280
+height: 800
+fullscreen: false
+# shell: powershell.exe    # default: pwsh/powershell on Windows, $SHELL on Linux
+backend: auto              # auto | pty | pipes
+encoding: utf-8            # utf-8 | cp437 | ascii | latin-1
+scrollback: 5000
+max_effects: 900           # simultaneous letter effects
+max_particles: 120000
+sound: true
+intro: true                # boot intro on startup
+plugins: true
+disabled_plugins: []       # e.g. [hud_meter]
+plugin_settings: {}        # e.g. {sine_scroller: {text: 'hi'}}
+
+# --- performance / power
+gpu: auto                  # auto | true | false   SDL2 GPU presenter (falls back to software)
+vsync: true
+fps: 60                    # 0 = uncapped (vsync)
+idle_fps: 30               # after 3 s without activity
+unfocused_fps: 15
+bg_fps: 30                 # background effects render rate (cached in between)
+smooth_scroll_lines: 3     # 0 = off
+
+# --- tabs, shell integration, capture
+tabbar: auto               # auto | always | never
+dim_inactive: true
+shell_integration: true    # auto-inject OSC 133 command blocks (pwsh, powershell, bash, cmd)
+command_blocks: true
+notify_after: 8            # seconds
+record_fps: 30
+banner: true               # show theme banners (c64 READY. ...)
+# ---------------------------------------------------------------- MQTT / Home Assistant (optional)
+# needs: pip install paho-mqtt   -   or enable just for one run:  --mqtt mqtt://user:pass@host:1883
+# docs/HOMEASSISTANT.md has automation examples (flash the lights red on errors, text display, printer)
+mqtt:
+  enabled: false
+  host: homeassistant.local
+  port: 1883
+  username: null
+  password: null
+  tls: false
+  device_id: null            # default: this computer's hostname
+  base_topic: pyvterm        # topics: pyvterm/<device_id>/...
+  discovery: true            # Home Assistant MQTT discovery (device appears automatically)
+  discovery_prefix: homeassistant
+  publish_text: false        # also send command lines + last error line (off = only codes & timings)
+  allow_control: true        # let Home Assistant change theme, effects, zen, sound, show messages ...
+  long_command: 10           # seconds after which a 'long_command' event fires
+
+# ---------------------------------------------------------------- full-screen apps & clipboard
+alt_effects: typed          # letter effects in vim / mc / pytermwm: off | typed (only what you type) | all
+# cell_bg_alpha: 170        # 0..255 see-through for colored cell backgrounds (mc, htop); default: theme / auto
+osc52: write                # programs may set the clipboard via OSC 52: off | write | read-write
+right_click: copy-paste     # right click copies the selection or pastes: copy-paste | off

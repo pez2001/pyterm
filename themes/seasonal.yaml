@@ -1,0 +1,21 @@
+name: seasonal
+description: "follows the calendar - New Year fireworks (Dec 31 / Jan 1), Christmas (Dec 1-26), Halloween (Oct 20 - Nov 1), Easter (a week around Easter Sunday), otherwise the season: cherry blossoms in spring, the beach in summer, autumn leaves, northern lights in winter"
+palette: ['#101018', '#ff5a6a', '#5ad890', '#ffd25a', '#5a8aff', '#c06aff', '#5ad8e8', '#f4f4ff',
+          '#4a4a60', '#ff8a96', '#8ae8b0', '#ffe48a', '#8ab0ff', '#d89aff', '#8ae8f0', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd25a'
+cursor_style: beam
+cursor_effects: [glow, sparkle]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [seasonal]
+bg_params: {seasonal: {force: null}}      # e.g. force: halloween
+bg_dim: 0.9
+letter_effect: pop
+delete_effect: random
+crt: {vignette: 0.35, bloom: 0.35}
+sound: {pack: glass, volume: 0.25}

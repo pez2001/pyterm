@@ -1,0 +1,22 @@
+name: sakura
+description: "cherry blossom morning - Mt. Fuji, a pagoda and a stone lantern, pink trees letting petals drift through the breeze onto a pond with koi; the letters you type release petals, Enter sends a gust"
+palette: ['#2a2030', '#e05a7a', '#6aa06a', '#e8b860', '#6a80c0', '#b07ac0', '#5aa8b0', '#fff4f8',
+          '#605068', '#ff8aa8', '#9ac89a', '#ffd890', '#9aacf0', '#d8a8e8', '#8ad0d8', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ff8aa8'
+cursor_style: beam
+cursor_effects: [sparkle]
+cursor_params: {sparkle: {rate: 3, color: '#ffd0e0'}}
+text_shadow: true
+font: builtin:thin8
+scale: 3
+border: 6
+background: [sakura]
+bg_dim: 0.9
+letter_effect: dissolve
+delete_effect: petals
+crt: {vignette: 0.3, bloom: 0.2}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  hanami\n\n"

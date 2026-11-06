@@ -1,0 +1,22 @@
+name: newyear
+description: "New Year's Eve - rockets with glowing trails burst over the city into thousands of tiny colorful pixels: peonies, chrysanthemums, golden willows, rings, crossettes, glitter, hearts and the new year in numbers; flashes light the sky, smoke drifts, the river mirrors it all; Enter launches rockets, typing fires small ones, a long command gets a finale; countdown on Dec 31"
+palette: ['#08060e', '#ff4a4a', '#5aff8a', '#ffd23c', '#4a8aff', '#ff4ad2', '#4af0ff', '#f6f0ff',
+          '#3a3450', '#ff8a8a', '#9affb8', '#ffe68a', '#8ab4ff', '#ff9ae8', '#9af6ff', '#ffffff']
+fg: '#f6f0ff'
+bg: '#06040c'
+bg_alpha: 0
+cursor: '#ffd23c'
+cursor_style: beam
+cursor_effects: [glow, sparkle, trail]
+cursor_params: {sparkle: {rate: 8}}
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [fireworks]
+bg_dim: 0.95
+letter_effect: pop
+delete_effect: firework
+crt: {vignette: 0.4, bloom: 0.55}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  *  HAPPY NEW YEAR  *   press Enter to light a rocket\n\n"

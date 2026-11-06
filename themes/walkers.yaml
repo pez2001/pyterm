@@ -1,0 +1,23 @@
+name: walkers
+description: lemmings-style - a horde of tiny critters walks, falls, builds and explodes all over your text
+palette: ['#101010', '#ff5050', '#50d050', '#ffd040', '#4070ff', '#d050d0', '#40d0d0', '#e0e0e0',
+          '#606060', '#ff8080', '#80ff80', '#ffff80', '#80a0ff', '#ff80ff', '#80ffff', '#ffffff']
+fg: '#e8f0ff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd040'
+cursor_effects: [glow, orbit]
+text_shadow: false
+font: builtin
+scale: 3
+border: 6
+background: [parallax]
+bg_dim: 0.45
+bg_params: {parallax: {colors: [[0, 0, 40], [30, 20, 70], [50, 30, 100], [40, 70, 50], [20, 40, 30]]}}
+letter_effect: drop
+delete_effect: dust
+crt: {scanlines: 0.25, vignette: 0.4, bloom: 0.3}
+sound: {pack: glass, volume: 0.25}
+plugins:
+  walkers: {enabled: true, max: 18, spawn_every: 2.0}
+banner: "\n  LET'S GO!   (failed commands make a critter explode, successes make them cheer)\n\n"

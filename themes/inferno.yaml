@@ -1,0 +1,17 @@
+name: inferno
+description: the terminal is on fire. literally.
+palette: ['#1a0500', '#ff3000', '#ffa000', '#ffd000', '#ff6020', '#ff2060', '#ffb060', '#ffe8d0',
+          '#5a1a00', '#ff5a3a', '#ffc04a', '#ffe070', '#ff8a5a', '#ff5a8a', '#ffd0a0', '#ffffff']
+fg: '#ffe8d0'
+bg: '#000000'
+bg_alpha: 90
+cursor: '#ffd000'
+cursor_effects: [glow, smoke]
+text_shadow: true
+font: builtin
+background: [fire]
+bg_dim: 0.6
+letter_effect: flame
+delete_effect: burn
+crt: {scanlines: 0.25, vignette: 0.6, bloom: 0.75, glitch: 0.2}
+sound: {pack: chime, volume: 0.3}

@@ -1,0 +1,21 @@
+name: jumpnrun
+description: jump'n'run - the cursor is a little hero, letters get bumped out of the blocks with coins, bricks shatter
+palette: ['#000000', '#e45c10', '#00a800', '#fcbc3c', '#0058f8', '#d800cc', '#00b8d8', '#fcfcfc',
+          '#7c7c7c', '#f87858', '#58d854', '#fce0a8', '#6888fc', '#f878f8', '#00e8d8', '#ffffff']
+fg: '#ffffff'
+bg: '#5c94fc'
+bg_alpha: 0
+cursor: '#fcbc3c'
+cursor_style: hero
+cursor_effects: []
+text_shadow: true
+font: builtin:fat8
+scale: 3
+border: 6
+background: [platformer]
+bg_dim: 1.0
+letter_effect: bump
+delete_effect: bricks
+crt: {scanlines: 0.2, vignette: 0.2}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n  STAGE 1-1          TIME 400\n\n"

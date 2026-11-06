@@ -1,0 +1,14 @@
+name: dos
+description: classic VGA text mode - for ANSI art (try --cat file.ans)
+palette: ['#000000', '#aa0000', '#00aa00', '#aa5500', '#0000aa', '#aa00aa', '#00aaaa', '#aaaaaa',
+          '#555555', '#ff5555', '#55ff55', '#ffff55', '#5555ff', '#ff55ff', '#55ffff', '#ffffff']
+fg: '#aaaaaa'
+bg: '#000000'
+cursor: '#aaaaaa'
+cursor_style: underline
+cursor_effects: []
+font: builtin
+letter_effect: none
+delete_effect: none
+crt: {scanlines: 0.2, vignette: 0.25}
+sound: {pack: 'off'}

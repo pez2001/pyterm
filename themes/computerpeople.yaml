@@ -1,0 +1,21 @@
+name: computerpeople
+description: "a little person lives in a cutaway house on your clock - sleeps, cooks, plays piano, walks the dog - and sits down at its own computer whenever you type (showcase of every feature: random letter + delete effects, hero cursor, emoji, trail, CRT)"
+palette: ['#202028', '#e05050', '#50b050', '#e0c050', '#5070d0', '#c060c0', '#50b0c0', '#f0f0e8',
+          '#707080', '#ff7878', '#80e080', '#fff080', '#80a0ff', '#f090f0', '#80e0f0', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd040'
+cursor_style: hero
+cursor_effects: [trail, ripple]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [dollhouse]
+bg_dim: 0.85
+letter_effect: random
+delete_effect: random
+crt: {scanlines: 0.15, vignette: 0.3, bloom: 0.3}
+sound: {pack: chime, volume: 0.3}
+banner: "\n  🏠 Welcome home!  😊  type something - your resident will hop on the computer\n\n"

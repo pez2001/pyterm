@@ -1,0 +1,20 @@
+name: discocity
+description: "80s retro-wave disco city - neon skyline with flickering signs, striped sunset, disco ball spraying light spots, lasers and an equalizer that dances to your output; letters flicker on like neon tubes"
+palette: ['#14002a', '#ff2a8a', '#3affb0', '#ffe14a', '#5a6aff', '#d42aff', '#2ad8ff', '#f8e8ff',
+          '#4a2a6a', '#ff6ab0', '#7affd0', '#fff07a', '#8a9aff', '#e87aff', '#7ae8ff', '#ffffff']
+fg: '#f8e8ff'
+bg: '#0a0014'
+bg_alpha: 60
+cursor: '#ff2a8a'
+cursor_effects: [glow, trail, sparkle]
+text_shadow: true
+font: builtin
+scale: 3
+border: 6
+background: [discocity]
+bg_dim: 0.75
+letter_effect: neon
+delete_effect: rainbow
+crt: {scanlines: 0.3, vignette: 0.5, bloom: 0.7, aberration: 1}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  ★ DISCO CITY ★  stayin' alive since 1983\n\n"

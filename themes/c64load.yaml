@@ -1,0 +1,23 @@
+name: c64load
+description: "endless C64 tape loading screen - softly drifting loading stripes (set stripes: authentic for the real frenzy), a picture builds up line by line in the classic interleaved order; ?LOAD ERROR when a command fails"
+palette: ['#000000', '#883932', '#55a049', '#bfce72', '#40318d', '#8b3f96', '#67b6bd', '#ffffff',
+          '#505050', '#b86962', '#94e089', '#bfce72', '#7869c4', '#8b3f96', '#67b6bd', '#ffffff']
+fg: '#a5a5ff'
+bg: '#40318d'
+bg_alpha: 0
+cursor: '#a5a5ff'
+cursor_style: block
+cursor_effects: []
+text_shadow: true
+font: builtin:fat8
+scale: 3
+border: 6
+background: [c64load]
+splash: c64
+bg_dim: 1.0
+letter_effect: none
+delete_effect: none
+bg_params: {c64load: {stripes: calm}}     # calm | authentic | off
+crt: {scanlines: 0.3, vignette: 0.35, bloom: 0.25}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n    **** COMMODORE 64 BASIC V2 ****\n 64K RAM SYSTEM  38911 BASIC BYTES FREE\n\nREADY.\nLOAD\"PYVTERM\",8,1\n\nSEARCHING FOR PYVTERM\nLOADING\n\n"

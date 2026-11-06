@@ -1,0 +1,15 @@
+name: interlace
+description: 1985 home computer on a TV - interlaced fields with motion combing, rasterwave, soft bloom
+fg: '#e8e8ff'
+bg: '#0a0a20'
+bg_alpha: 140
+cursor: '#ffffff'
+text_shadow: true
+font: builtin:topaz
+scale: 2
+background: [rasterwave]
+bg_dim: 0.35
+letter_effect: dissolve
+delete_effect: dust
+crt: {interlace: 0.8, vignette: 0.6, bloom: 0.4, noise: 0.25, flicker: 0.03}
+sound: {pack: glass, volume: 0.25}

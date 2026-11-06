@@ -1,0 +1,22 @@
+name: christmas
+description: "snowy village on Christmas night - a decorated tree with chasing lights and a glowing star, presents, houses with warm flickering windows and chimney smoke, a snowman that waves on Enter, falling snow (heavier with output), shooting stars, and Santa's sleigh crossing the moon (always after a long successful command)"
+palette: ['#0a1020', '#e04040', '#40b060', '#ffd050', '#4080e0', '#c060c0', '#50c0d0', '#f4f8ff',
+          '#4a5878', '#ff7a7a', '#7ae09a', '#ffe48a', '#8ab0ff', '#e09ae0', '#8ae0ec', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd050'
+cursor_style: block
+cursor_effects: [glow, sparkle]
+cursor_params: {sparkle: {color: '#fff4c0'}}
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [christmas]
+bg_dim: 0.9
+letter_effect: sand
+delete_effect: snow
+crt: {vignette: 0.35, bloom: 0.35}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  * Merry Christmas *   ho ho ho\n\n"

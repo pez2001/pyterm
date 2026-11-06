@@ -1,0 +1,19 @@
+name: emerald_mine
+description: every letter is mined out of the earth by a tiny miner. collect gems!
+fg: '#ffeeaa'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#7dff8a'
+cursor_style: miner
+cursor_effects: []
+text_shadow: true
+font: builtin
+scale: 3
+miner: true
+letter_effect: none
+delete_effect: shatter
+border: 10
+border_solid: true
+border_color: '#2a1a0e'
+crt: {scanlines: 0.25, vignette: 0.7, bloom: 0.45}
+sound: {pack: chime, volume: 0.35}

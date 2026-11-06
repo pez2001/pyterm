@@ -1,0 +1,23 @@
+name: roman
+description: "SENATVS POPVLVSQVE ROMANVS - a marble tablet in torch light; every letter is chiseled into the stone in classic serif capitals while stone dust trickles down and chips fly, a chisel and mallet strike as you type, deleted letters crumble; colors are the paints Romans filled their inscriptions with"
+palette: ['#2a2420', '#a8321e', '#4e7a3a', '#b8862a', '#2e5a8a', '#7a3a6a', '#2e7a7a', '#5a5048',
+          '#4a4038', '#c8482e', '#6a9a4e', '#d0a040', '#4a7ab0', '#9a5a8a', '#4a9a9a', '#2a2420']
+fg: '#8a2a1c'                # minium red - Roman inscriptions were painted into the grooves
+bg: '#d6ccb8'
+bg_alpha: 0
+cursor: '#5a4a3a'
+cursor_style: chisel
+cursor_effects: []
+bold_bright: false
+text_shadow: false
+font: builtin:roman
+scale: 2
+border: 24
+background: [stone]
+bg_params: {stone: {color: [214, 204, 184], frame: 20, title: 'S P Q R'}}
+bg_dim: 1.0
+letter_effect: chisel
+delete_effect: crumble
+crt: {vignette: 0.45, bloom: 0.08}
+sound: {pack: typewriter, volume: 0.35}
+banner: "\n   SENATVS POPVLVSQVE ROMANVS\n\n"

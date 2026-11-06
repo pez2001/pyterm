@@ -1,0 +1,22 @@
+name: watermirror
+description: "moonlit lake - everything above the waterline, your text included, is mirrored in the water and bent by waves; typing drops ripples under the cursor, Enter sends a swell, a failed command makes a splash"
+palette: ['#0a0c1c', '#ff6a7a', '#6ae0a0', '#ffd27a', '#6a9cff', '#c08aff', '#6adcf0', '#e6eaff',
+          '#3a4060', '#ff9aa6', '#9af0c0', '#ffe6a6', '#9abcff', '#d8b0ff', '#9aecf8', '#ffffff']
+fg: '#e6eaff'
+bg: '#060818'
+bg_alpha: 0
+cursor: '#ffe6a6'
+cursor_style: beam
+cursor_effects: [ripple, sparkle]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [watermirror]
+bg_params: {watermirror: {level: 0.6, tint: '#6a9ce0', waves: 1.0}}
+bg_dim: 0.9
+letter_effect: fluid
+delete_effect: melt
+crt: {vignette: 0.45, bloom: 0.4}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  the lake is calm tonight...\n\n"

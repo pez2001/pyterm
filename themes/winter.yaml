@@ -1,0 +1,21 @@
+name: winter
+description: "arctic night - northern lights fold and ripple over snowy peaks, mirrored in a frozen lake, a pine forest and a cabin with a warm window, gentle snow; typing makes the aurora flare up"
+palette: ['#040810', '#e05a6a', '#5affa0', '#f0d070', '#5a8af0', '#b07af0', '#5ae0e0', '#eaf4ff',
+          '#34405a', '#ff8a9a', '#8affc0', '#ffe49a', '#8ab0ff', '#d0a8ff', '#8af0f0', '#ffffff']
+fg: '#eaf4ff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#5affa0'
+cursor_style: beam
+cursor_effects: [glow]
+text_shadow: true
+font: builtin:thin8
+scale: 3
+border: 6
+background: [winter]
+bg_dim: 0.95
+letter_effect: dissolve
+delete_effect: snow
+crt: {vignette: 0.45, bloom: 0.45}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  -30 C outside. cozy in here.\n\n"

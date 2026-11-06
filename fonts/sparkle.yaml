@@ -1,0 +1,7 @@
+# pyvterm animated font - one PNG sheet per frame (16x16 CP437 grid)
+name: sparkle
+type: animated
+fps: 6.0
+cell: [6, 10]
+frames: [sparkle_0.png, sparkle_1.png, sparkle_2.png, sparkle_3.png]
+description: builtin font with twinkling pixels - example of the animated font format

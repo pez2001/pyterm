@@ -1,0 +1,21 @@
+name: halloween
+description: "haunted hill under a huge moon - flickering windows (someone is watching), bats, a drifting ghost, fog, grinning jack-o'-lanterns that flare up while you type, a spider dropping on its thread; a failed command brings lightning, thunder and a BOO"
+palette: ['#0c0610', '#ff5a1e', '#7aff5a', '#ffb43c', '#7a5aff', '#c83cff', '#5affb4', '#ffe8c8',
+          '#3c2840', '#ff8a5a', '#a6ff8a', '#ffd27a', '#a68aff', '#e08aff', '#8affd0', '#ffffff']
+fg: '#ffe8c8'
+bg: '#080408'
+bg_alpha: 0
+cursor: '#ff8a1e'
+cursor_style: block
+cursor_effects: [glow, smoke]
+text_shadow: true
+font: builtin:fat8
+scale: 3
+border: 6
+background: [halloween]
+bg_dim: 0.9
+letter_effect: glitch
+delete_effect: burn
+crt: {vignette: 0.6, bloom: 0.4, flicker: 0.04, noise: 0.1}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n  ~ trick or treat ~   type if you dare...\n\n"

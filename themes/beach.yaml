@@ -1,0 +1,21 @@
+name: beach
+description: "beach on your clock - the sun sets over the sea with a glittering path, waves roll in, letters you type fall onto the sand and little crabs carry them around; Enter sends a big wave that washes them away; seagulls, a palm, and a lighthouse beam at night"
+palette: ['#10202a', '#ff7060', '#60c080', '#ffd070', '#5090e0', '#d080c0', '#50c8d8', '#fff4e0',
+          '#506070', '#ff9a8a', '#90e0a8', '#ffe4a0', '#80b4f0', '#e8a8d8', '#88e0ec', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd070'
+cursor_style: beam
+cursor_effects: [glow]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [beach]
+bg_dim: 0.9
+letter_effect: drop
+delete_effect: dust
+crt: {vignette: 0.35, bloom: 0.3}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  ~ ~ ~  the sea is calling  ~ ~ ~\n\n"

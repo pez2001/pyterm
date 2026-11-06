@@ -1,0 +1,16 @@
+name: amber_crt
+description: 1983 monochrome amber monitor - phosphor afterglow, curvature, 2400 baud typewriter
+palette: ['#1a0e00', '#b86a00', '#d08000', '#ffb000', '#9a5a00', '#c07400', '#e09a20', '#ffb000',
+          '#5a3400', '#ff9a00', '#ffb84a', '#ffd070', '#c88a30', '#ffaa40', '#ffc860', '#ffe0a0']
+fg: '#ffb000'
+bg: '#120900'
+cursor: '#ffd070'
+cursor_style: underline
+bold_bright: true
+font: builtin
+letter_effect: none
+delete_effect: none
+writer: {mode: baud, baud: 2400}
+crt: {scanlines: 0.55, vignette: 0.9, bloom: 0.8, phosphor: 0.82, flicker: 0.04, noise: 0.35, curvature: 0.6}
+sound: {pack: typewriter, volume: 0.45}
+border: 14

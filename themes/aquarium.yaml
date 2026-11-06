@@ -1,0 +1,21 @@
+name: aquarium
+description: "fish tank - curious fish swim over to your cursor while you type and scatter on Enter, every letter you type sinks down to the sand, bubbles & caustics; a turtle visits after long commands, the water turns murky when one fails, and the fish fall asleep when you're away"
+palette: ['#06243c', '#ff7a6a', '#7ae6a0', '#ffd27a', '#6ab4ff', '#d28aff', '#6ae6f0', '#e6f6ff',
+          '#3a6080', '#ffa89a', '#a6f6c0', '#ffe6a6', '#9ad0ff', '#e4b0ff', '#9af0f8', '#ffffff']
+fg: '#e6f6ff'
+bg: '#041828'
+bg_alpha: 0
+cursor: '#ffd27a'
+cursor_style: beam
+cursor_effects: [ripple]
+text_shadow: true
+font: builtin:topaz
+scale: 3
+border: 6
+background: [aquarium]
+bg_dim: 0.85
+letter_effect: fluid
+delete_effect: dust
+crt: {vignette: 0.4, bloom: 0.3}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  ><>  blub.  <><\n\n"

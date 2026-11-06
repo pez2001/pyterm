@@ -1,0 +1,14 @@
+name: rotozoom
+description: rotozoomer + twister, amiga megademo energy
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 140
+cursor: '#00ffcc'
+text_shadow: true
+font: builtin:topaz
+background: [rotozoom, twister]
+bg_dim: 0.35
+letter_effect: laser
+delete_effect: shatter
+crt: {scanlines: 0.3, vignette: 0.5, bloom: 0.5, aberration: 1}
+sound: {pack: glass, volume: 0.25}

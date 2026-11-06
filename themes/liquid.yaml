@@ -1,0 +1,15 @@
+name: liquid
+description: letters fill up with liquid; rasterwave background
+fg: '#d0f4ff'
+bg: '#000814'
+bg_alpha: 160
+cursor: '#40c0ff'
+cursor_effects: [glow, ripple]
+text_shadow: true
+font: builtin
+background: [rasterwave]
+bg_dim: 0.3
+letter_effect: fluid
+delete_effect: melt
+crt: {scanlines: 0.3, vignette: 0.5, bloom: 0.5}
+sound: {pack: glass, volume: 0.3}

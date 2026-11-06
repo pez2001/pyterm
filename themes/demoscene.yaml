@@ -1,0 +1,19 @@
+name: demoscene
+description: amiga copper bars over a starfield, laser engraving, rainbow border
+fg: '#ffffff'
+bg: '#000010'
+bg_alpha: 110
+cursor: '#ffff00'
+cursor_effects: [glow, trail, sparkle]
+text_shadow: true
+font: builtin
+background: [starfield, copper]
+bg_dim: 0.5
+border: 12
+border_fx: rainbow
+letter_effect: laser
+delete_effect: rainbow
+crt: {scanlines: 0.3, vignette: 0.5, bloom: 0.6}
+sound: {pack: 8bit, volume: 0.3}
+plugins:
+  sine_scroller: {enabled: true}

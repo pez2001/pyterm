@@ -1,0 +1,22 @@
+name: invaders
+description: arcade alien invasion - the cannon shoots every letter into place, color-band overlay, starfield
+palette: ['#000000', '#ff3030', '#30ff60', '#ffff40', '#4080ff', '#ff40ff', '#40ffff', '#ffffff',
+          '#606060', '#ff6060', '#80ff80', '#ffff90', '#80b0ff', '#ff90ff', '#90ffff', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#30ff60'
+cursor_effects: []
+text_shadow: true
+font: builtin:thin8
+scale: 3
+border: 6
+background: [starfield, invaders]
+bg_dim: 0.9
+bg_params: {starfield: {count: 150}}
+letter_effect: shoot
+delete_effect: invader
+color_overlay: [[0.0, 0.12, '#ff5050'], [0.78, 1.0, '#50ff70']]
+crt: {scanlines: 0.35, vignette: 0.45, bloom: 0.5, flicker: 0.02}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n  SCORE<1>    HI-SCORE    SCORE<2>\n    0000        9990\n\n         INSERT COIN\n\n"

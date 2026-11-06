@@ -1,0 +1,17 @@
+name: matrix
+description: follow the white rabbit - digital rain & decryption
+palette: ['#000000', '#3bff6b', '#00ff41', '#9dff9d', '#008f11', '#00c040', '#5aff9a', '#c0ffc0',
+          '#003b00', '#6bff8f', '#4aff7a', '#d0ffd0', '#20b040', '#60ff90', '#90ffb0', '#ffffff']
+fg: '#00ff41'
+bg: '#000000'
+bg_alpha: 170
+cursor: '#c0ffc0'
+cursor_effects: [glow, trail]
+font: builtin
+background: [matrix]
+bg_dim: 0.45
+letter_effect: decrypt
+delete_effect: dust
+text_shadow: true
+crt: {scanlines: 0.3, vignette: 0.6, bloom: 0.7, phosphor: 0.5}
+sound: {pack: glass, volume: 0.25}

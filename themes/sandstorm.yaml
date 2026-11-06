@@ -1,0 +1,15 @@
+name: sandstorm
+description: letters pile up from falling sand; tunnel in the back
+fg: '#ffe6b0'
+bg: '#100800'
+bg_alpha: 150
+cursor: '#ffc870'
+text_shadow: true
+font: builtin
+background: [tunnel]
+bg_dim: 0.25
+bg_params: {tunnel: {color: [255, 170, 80]}}
+letter_effect: sand
+delete_effect: dust
+crt: {scanlines: 0.3, vignette: 0.6, bloom: 0.4}
+sound: {pack: glass, volume: 0.25}

@@ -1,0 +1,27 @@
+name: gameboy
+description: four shades of green - dot-matrix LCD grid, ordered dithering, everything locked to the DMG palette
+palette: ['#0f380f', '#8bac0f', '#8bac0f', '#9bbc0f', '#306230', '#8bac0f', '#8bac0f', '#9bbc0f',
+          '#306230', '#9bbc0f', '#9bbc0f', '#9bbc0f', '#8bac0f', '#9bbc0f', '#9bbc0f', '#9bbc0f']
+fg: '#9bbc0f'
+bg: '#0f380f'
+bg_alpha: 200
+cursor: '#9bbc0f'
+cursor_effects: []
+bold_bright: false
+font: builtin:fat8
+scale: 3
+border: 10
+border_solid: true
+border_color: '#8b956d'
+background: [parallax]
+bg_dim: 0.8
+bg_params: {parallax: {colors: [[15, 56, 15], [48, 98, 48], [48, 98, 48], [139, 172, 15], [48, 98, 48]]}}
+letter_effect: drop
+delete_effect: melt
+palette_lock:
+  mode: luma
+  dither: 0.7
+  colors: ['#0f380f', '#306230', '#8bac0f', '#9bbc0f']
+crt: {lcd: 0.35, vignette: 0.15, phosphor: 0.55}
+sound: {pack: 8bit, volume: 0.3}
+banner: "\n   POCKET TERMINAL\n   4 SHADES OF GREEN\n\n"

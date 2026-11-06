@@ -1,0 +1,22 @@
+name: easter
+description: "spring meadow at Easter - a bunny hops, sits and sniffs (and jumps on Enter), chicks peck around, painted eggs hide in the grass and every letter you type drops a new one, a tree in full blossom, butterflies"
+palette: ['#203018', '#e85a7a', '#5ab04a', '#e8b030', '#4a8ad0', '#b070d0', '#3ab0b0', '#ffffff',
+          '#506040', '#ff8aa6', '#8ad87a', '#ffd870', '#8ab4f0', '#d0a0f0', '#7ad8d8', '#ffffff']
+fg: '#ffffff'
+bg: '#000000'
+bg_alpha: 0
+cursor: '#ffd870'
+cursor_style: hero
+cursor_effects: [sparkle]
+cursor_params: {sparkle: {rate: 3, color: '#ffe0f0'}}
+text_shadow: true
+font: builtin:cute
+scale: 3
+border: 6
+background: [easter]
+bg_dim: 0.9
+letter_effect: pop
+delete_effect: petals
+crt: {vignette: 0.25}
+sound: {pack: glass, volume: 0.25}
+banner: "\n  happy easter!  go find the eggs\n\n"
