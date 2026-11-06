@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyflakes
+      - name: Byte-compile
+        run: python -m compileall -q pyvterm plugins tools pyvterm.py
+      - name: Pyflakes (undefined names / syntax only)
+        run: |
+          if python -m pyflakes pyvterm pyvterm.py tools | grep -E "undefined name|syntax"; then exit 1; fi
+      - name: Validate YAML (config + themes)
+        run: |
+          python - <<'PY'
+          import glob, yaml
+          for f in ['config.yaml', *glob.glob('themes/*.yaml')]:
+              yaml.safe_load(open(f, encoding='utf-8'))
+              print('ok', f)
+          PY
+
+  test:
+    name: test (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12", "3.13"]
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install dependencies (pip)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install paho-mqtt
+      - name: Show installed packages
+        run: pip list
+      - name: Import check
+        run: python -c "import pygame, numpy, yaml, pyvterm.app; print('imports ok')"
+      - name: CLI help
+        run: python pyvterm.py --help
+      - name: Headless smoke test (demo shell)
+        run: python tools/ci_smoke.py
+
+  clean-venv:
+    name: clean venv install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fresh venv + pip install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+          SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy .venv/bin/python tools/ci_smoke.py
