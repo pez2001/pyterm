@@ -266,3 +266,12 @@ sounds/<pack>/        optional wav/ogg overrides
 * Under heavy output: at most `spawn_budget` new effects per frame, effect durations shrink with load, letters that
   scroll away inside the same frame never get effects, and full-screen apps are effect-free.
 * `python pyvterm.py --benchmark` prints parser MB/s and frame times per theme.
+
+## License
+
+pyvterm is free software: you can redistribute it and/or modify it under the terms of the
+**GNU Lesser General Public License** as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version (`LGPL-3.0-or-later`).
+See [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) (the GPL v3 it builds on).
+
+Plugins and themes you write for pyvterm are your own and can use any license you like.
