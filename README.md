@@ -158,9 +158,9 @@ dressed up like a 1992 demoscene production:
 ## Install & run
 
 ```
-pip install pyterm                     # from PyPI - includes all themes, fonts, effects, plugins and sounds
-pip install "pyterm[all]"              # + MP4/GIF export (imageio-ffmpeg) and MQTT / Home Assistant (paho-mqtt)
-pyterm --demo                          # built-in demo shell; plain `pyterm` starts your shell
+pip install pyterm-pixel                  # from PyPI - includes all themes, fonts, effects, plugins and sounds
+pip install "pyterm-pixel[all]"           # + MP4/GIF export (imageio-ffmpeg) and MQTT / Home Assistant (paho-mqtt)
+pyterm --demo                          # the command is `pyterm`; --demo = built-in demo shell, plain `pyterm` starts your shell
 ```
 
 User themes, fonts and plugins go to `%APPDATA%\pyterm` (Windows) or `~/.config/pyterm` (Linux/macOS).
