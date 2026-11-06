@@ -2,6 +2,12 @@
 
 [![CI](https://github.com/pez2001/pyterm/actions/workflows/ci.yml/badge.svg)](https://github.com/pez2001/pyterm/actions/workflows/ci.yml)
 
+<p align="center">
+  <img src="docs/media/showcase.gif" alt="pyterm showcase" width="720">
+</p>
+
+<p align="center"><a href="docs/media/showcase.mp4"><b>▶ Watch the full showcase video (MP4)</b></a></p>
+
 A real, usable terminal emulator for **Windows and Linux**, written in Python + pygame,
 dressed up like a 1992 demoscene production:
 
@@ -154,6 +160,17 @@ dressed up like a 1992 demoscene production:
 * retro console themes: **c64**, **amiga**, **nes_famicom**, **gameboy** with matching generated pixel fonts
   (`builtin:fat8`, `builtin:topaz`, `builtin:thin8`), **palette lock** (everything quantized to the console palette,
   optional ordered dithering) and a dot-matrix **LCD** filter
+
+## Screenshots
+
+| | |
+|---|---|
+| ![neon](docs/media/neon.png)<br>**neon** | ![emerald mine](docs/media/emerald_mine.png)<br>**emerald_mine** |
+| ![c64](docs/media/c64.png)<br>**c64** | ![amiga](docs/media/amiga.png)<br>**amiga** |
+| ![vaporwave](docs/media/vaporwave.png)<br>**vaporwave** | ![inferno](docs/media/inferno.png)<br>**inferno** |
+| ![gameboy](docs/media/gameboy.png)<br>**gameboy** | ![weather](docs/media/weather.png)<br>**weather** |
+
+Regenerate them with `python tools/screenshots.py docs/media` and the video with `python tools/showcase.py docs/media/showcase.mp4`.
 
 ## Install & run
 
