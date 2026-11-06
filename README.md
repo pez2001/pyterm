@@ -270,6 +270,6 @@ sounds/<pack>/        optional wav/ogg overrides
 ## License
 
 pyvterm is free software: you can redistribute it and/or modify it under the terms of the
-**GNU Lesser General Public License** as published by the Free Software Foundation, either version 3
-of the License, or (at your option) any later version (`LGPL-3.0-or-later`).
+**GNU Lesser General Public License, version 3** as published by the Free Software Foundation
+(`LGPL-3.0-only`).
 See [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) (the GPL v3 it builds on).
