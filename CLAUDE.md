@@ -5,6 +5,7 @@ Oldschool demoscene look: themes, letter/delete effects, background scenes, spla
 The user is on Windows (PowerShell), window ~1600x1000.
 
 ## Run / test
+- Unit tests: `python -m unittest discover -s tests -v` (pty/process tests are skipped on Windows); smoke test: `python tools/ci_smoke.py`
 - `python -m pyterm` (or `run.bat`), `--demo` = built-in fake shell (no real shell, good for tests)
 - Useful flags: `-t THEME`, `--size 1280x720`, `--random`, `--mqtt URL --mqtt-debug`, `--alt-effects`, `--splash`
 - Headless check: set `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy`, build `App(*build_config([...,'--demo','--gpu','false']))`,

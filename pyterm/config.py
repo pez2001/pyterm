@@ -116,7 +116,7 @@ def parse_args(argv=None):
     ap.add_argument('-s', '--font-size', type=int)
     ap.add_argument('--no-aa', dest='antialias', action='store_false', default=None, help='crisp TTF rendering')
     ap.add_argument('-x', '--scale', type=int, help='pixel scale factor')
-    ap.add_argument('--size', help='window size WxH')
+    ap.add_argument('--size', type=parse_size, metavar='WxH', help='window size in pixels, e.g. 1280x720')
     ap.add_argument('--fullscreen', action='store_true', default=None)
     ap.add_argument('-e', '--shell', help='command to run')
     ap.add_argument('--backend', choices=['auto', 'pty', 'pipes'])
@@ -232,6 +232,20 @@ def resolve_random(cfg, rng=None):
     return picked
 
 
+def parse_size(text):
+    """'1280x720' -> (1280, 720); raises argparse.ArgumentTypeError with a readable message"""
+    w, sep, h = str(text).lower().replace(' ', '').partition('x')
+    try:
+        if not sep:
+            raise ValueError
+        w, h = int(w), int(h)
+    except ValueError:
+        raise argparse.ArgumentTypeError('%r is not a size - use WIDTHxHEIGHT, e.g. 1280x720' % text) from None
+    if w < 1 or h < 1:
+        raise argparse.ArgumentTypeError('size must be positive, got %r' % text)
+    return w, h
+
+
 def build_config(argv=None):
     a = parse_args(argv)
     cfg = dict(DEFAULTS)
@@ -240,8 +254,14 @@ def build_config(argv=None):
         if v is not None and k in cfg:
             cfg[k] = v
     if a.size:
-        w, _, h = a.size.lower().partition('x')
-        cfg['width'], cfg['height'] = int(w), int(h)
+        cfg['width'], cfg['height'] = a.size
+    if not (cfg.get('demo') or cfg.get('cat') or getattr(a, 'benchmark', False) or getattr(a, 'list', False)
+            or getattr(a, 'export_font', None)):
+        from .backend import shell_problem
+        problem = shell_problem(cfg.get('shell'))
+        if problem:
+            print('pyterm: error: %s' % problem, file=sys.stderr)
+            sys.exit(2)
     if isinstance(cfg.get('background'), str):
         cfg['background'] = [b for b in cfg['background'].split(',') if b] or ['none']
     if getattr(a, 'random', False):

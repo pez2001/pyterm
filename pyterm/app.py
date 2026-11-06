@@ -158,6 +158,9 @@ class Tab:
 
 
 # ============================================================================ app
+_warned_screens = set()
+
+
 class App:
     def __init__(self, cfg, args):
         self.cfg = cfg
@@ -331,7 +334,18 @@ class App:
         if not isinstance(sg, dict) or not sg.get('cols') or not sg.get('rows'):
             return None
         bx, by = (sg.get('border') or [32, 36]) if isinstance(sg.get('border'), (list, tuple)) else (sg.get('border') or 32,) * 2
-        return int(sg['cols']), int(sg['rows']), int(bx), int(by)
+        try:
+            cols, rows, bx, by = int(sg['cols']), int(sg['rows']), int(bx), int(by)
+            if cols < 1 or rows < 1:
+                raise ValueError('cols and rows must be positive')
+            return cols, rows, bx, by
+        except (TypeError, ValueError) as e:
+            name = self.theme.get('name', '?')
+            if name not in _warned_screens:
+                _warned_screens.add(name)
+                print("[pyterm] theme '%s': invalid screen settings %r (%s) - using a resizable terminal"
+                      % (name, sg, e))
+            return None
 
     def layout(self):
         W, H = self.presenter.size()

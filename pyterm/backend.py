@@ -17,6 +17,10 @@ import time
 
 IS_WIN = sys.platform.startswith('win')
 
+# Reader threads stop reading once this many chunks wait for the render loop. The shell then blocks on its
+# full pty buffer instead of us buffering unbounded output (`yes`, `cat /dev/urandom`) in memory.
+MAX_QUEUED = 64
+
 
 class Backend:
     alive = True
@@ -29,6 +33,11 @@ class Backend:
     def set_encoding(self, enc):
         self.encoding = enc
         self.decoder = codecs.getincrementaldecoder(enc)(errors='replace')
+
+    def _throttle(self):
+        """called by reader threads before each read: wait while the consumer is behind"""
+        while self.alive and self.q.qsize() >= MAX_QUEUED:
+            time.sleep(0.002)
 
     def _push_bytes(self, b: bytes):
         t = self.decoder.decode(b)
@@ -66,6 +75,28 @@ def default_shell():
     return os.environ.get('SHELL') or ('/bin/bash' if os.path.exists('/bin/bash') else '/bin/sh')
 
 
+def shell_problem(cmd):
+    """None when `cmd` (a command line) can be started, else a short human-readable reason"""
+    import shlex
+    if not isinstance(cmd, str) or not cmd.strip():
+        return None
+    try:
+        parts = shlex.split(cmd, posix=not IS_WIN)
+    except ValueError as e:
+        return 'cannot parse shell command %r: %s' % (cmd, e)
+    if not parts:
+        return None
+    prog = parts[0].strip('"\'')
+    found = shutil.which(prog) or (prog if os.path.isfile(prog) and os.access(prog, os.X_OK) else None)
+    if found:
+        return None
+    if os.path.isdir(prog):
+        return 'shell %r is a directory, not a program' % prog
+    if os.path.exists(prog):
+        return 'shell %r exists but is not executable' % prog
+    return 'shell not found: %r (check -e / the "shell:" setting, or leave it out to use %s)' % (prog, default_shell())
+
+
 class PosixPty(Backend):
     name = 'pty'
 
@@ -87,10 +118,12 @@ class PosixPty(Backend):
                 os._exit(127)
         self.pid, self.fd = pid, fd
         self.resize(cols, rows)
-        threading.Thread(target=self._reader, daemon=True).start()
+        self._thread = threading.Thread(target=self._reader, daemon=True)
+        self._thread.start()
 
     def _reader(self):
         while self.alive:
+            self._throttle()
             try:
                 b = os.read(self.fd, 65536)
             except OSError:
@@ -99,6 +132,21 @@ class PosixPty(Backend):
                 break
             self._push_bytes(b)
         self.alive = False
+        self._reap(2.0)   # the shell is gone: collect it so it does not stay a zombie
+
+    def _reap(self, timeout):
+        """wait up to `timeout` s for the child to exit and collect it; True when it is gone"""
+        end = time.time() + timeout
+        while True:
+            try:
+                pid, _ = os.waitpid(self.pid, os.WNOHANG)
+            except ChildProcessError:   # already collected
+                return True
+            if pid:
+                return True
+            if time.time() >= end:
+                return False
+            time.sleep(0.01)
 
     def write(self, text):
         try:
@@ -116,12 +164,31 @@ class PosixPty(Backend):
             pass
 
     def close(self):
+        """end the shell for real: hang up, then terminate, then kill (the whole process group), collect the
+        child and release the pty. Safe to call twice."""
         self.alive = False
-        try:
-            import signal
-            os.kill(self.pid, signal.SIGHUP)
-        except Exception:
-            pass
+        if getattr(self, 'closed', False):
+            return
+        self.closed = True
+        import signal
+        for sig, wait in ((signal.SIGHUP, 0.3), (signal.SIGTERM, 0.3), (signal.SIGKILL, 2.0)):
+            try:
+                os.killpg(self.pid, sig)    # pty.fork() made the child a session/group leader
+            except ProcessLookupError:
+                pass
+            except OSError:
+                try:
+                    os.kill(self.pid, sig)
+                except OSError:
+                    pass
+            if self._reap(wait):
+                break
+        self._thread.join(1.0)
+        if not self._thread.is_alive():
+            try:
+                os.close(self.fd)
+            except OSError:
+                pass
 
 
 class WinPty(Backend):
@@ -138,6 +205,7 @@ class WinPty(Backend):
 
     def _reader(self):
         while self.alive:
+            self._throttle()
             try:
                 t = self.proc.read(65536)
             except EOFError:
@@ -186,6 +254,7 @@ class PipeShell(Backend):
 
     def _reader(self):
         while self.alive:
+            self._throttle()
             b = self.proc.stdout.read1(65536) if hasattr(self.proc.stdout, 'read1') else self.proc.stdout.read(1)
             if not b:
                 break
