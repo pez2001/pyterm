@@ -1,6 +1,6 @@
-# pyvterm — the pixel-art overkill terminal
+# pyterm — the pixel-art overkill terminal
 
-[![CI](https://github.com/pez2001/pyvterm/actions/workflows/ci.yml/badge.svg)](https://github.com/pez2001/pyvterm/actions/workflows/ci.yml)
+[![CI](https://github.com/pez2001/pyterm/actions/workflows/ci.yml/badge.svg)](https://github.com/pez2001/pyterm/actions/workflows/ci.yml)
 
 A real, usable terminal emulator for **Windows and Linux**, written in Python + pygame,
 dressed up like a 1992 demoscene production:
@@ -135,17 +135,17 @@ dressed up like a 1992 demoscene production:
 * **plugins** (single `.py` files, hot reload, can add letter effects, delete effects, backgrounds, overlays, hotkeys, commands)
 * **tabs & split panes** (any nesting), focus with Alt+Arrows, inactive panes dimmed, new panes open in the current folder
 * **inline images**: Sixel, kitty graphics protocol, iTerm2 `OSC 1337` — drawn crisp at window resolution,
-  scroll with the text, survive scrollback (`python -m pyvterm.imgcat pic.png [--sixel|--iterm]`)
+  scroll with the text, survive scrollback (`python -m pyterm.imgcat pic.png [--sixel|--iterm]`)
 * **shell integration / command blocks** (OSC 133 + OSC 7): green/red/blue gutter per command, hover for exit code +
   duration, jump between prompts, copy the last command's output, notification when long commands finish.
   Auto-injected for PowerShell, bash and cmd; script for zsh (docs/SHELL.md)
 * **video export**: MP4 / GIF straight from the effects (Ctrl+Shift+G / J) or offline:
-  `python pyvterm.py --demo -t c64 --record c64.gif --frames 300`
+  `python -m pyterm --demo -t c64 --record c64.gif --frames 300`
 * **smooth scrolling** (pixel-smooth output scroll + scrollback), **GPU presenter** (SDL2 renderer, vsync, GPU
   upscaling), **eco mode** (zero CPU when nothing moves), reduced fps when idle/unfocused, cached background rate
 * **boot splashes** are pluggable classes (`splash: demo | c64 | c64_clean | none`, `--splash NAME|random`, demo shell `splash c64`):
   the **c64** theme powers up like the breadbin — READY., `LOAD"$",8,1`, `LIST` with the disk directory,
-  `LOAD"PYVTERM",8,1` with loading stripes and a picture building up, `RUN` — and then uses only the real
+  `LOAD"PYTERM",8,1` with loading stripes and a picture building up, `RUN` — and then uses only the real
   **320×200 text area inside the big C64 border**, in **80-column mode** with a 4×8 font like the C64's 80-column
   programs (`screen: {cols: 80, rows: 25, border: [32, 36]}`, `font: builtin:c64narrow`), scaled to fit;
   **c64_40** is the faithful original 40×25 screen with the 8×8 font, for real C64 text content
@@ -157,15 +157,25 @@ dressed up like a 1992 demoscene production:
 
 ## Install & run
 
+```
+pip install pyterm                     # from PyPI - includes all themes, fonts, effects, plugins and sounds
+pip install "pyterm[all]"              # + MP4/GIF export (imageio-ffmpeg) and MQTT / Home Assistant (paho-mqtt)
+pyterm --demo                          # built-in demo shell; plain `pyterm` starts your shell
+```
+
+User themes, fonts and plugins go to `%APPDATA%\pyterm` (Windows) or `~/.config/pyterm` (Linux/macOS).
+
+From a source checkout instead:
+
 ```bash
 pip install -r requirements.txt        # pygame-ce, numpy, pyyaml (+ pywinpty on Windows)
-python pyvterm.py                      # your shell, default theme "neon"
-python pyvterm.py --demo               # no shell: built-in show + demo commands (type "help")
-python pyvterm.py -t emerald_mine      # dig, miner, dig!
-python pyvterm.py --studio             # editor docked next to the live terminal
-python pyvterm.py --cat art.ans -t dos # ANSI art viewer (cp437)
-python pyvterm.py --list               # themes, effects, backgrounds, fonts
-python pyvterm.py --benchmark          # headless performance numbers
+python -m pyterm                      # your shell, default theme "neon"
+python -m pyterm --demo               # no shell: built-in show + demo commands (type "help")
+python -m pyterm -t emerald_mine      # dig, miner, dig!
+python -m pyterm --studio             # editor docked next to the live terminal
+python -m pyterm --cat art.ans -t dos # ANSI art viewer (cp437)
+python -m pyterm --list               # themes, effects, backgrounds, fonts
+python -m pyterm --benchmark          # headless performance numbers
 ```
 
 Windows: `run.bat`, Linux: `./run.sh`. Use Python 3.8+. **pygame-ce** is recommended; classic pygame 2 works too.
@@ -179,12 +189,12 @@ Useful flags: `-t THEME`, `-f FONT` (`builtin`, `sys:Consolas`, `fonts/x.ttf|.bd
 `random:a,b,c`, and for stackable lists `randomN`:
 
 ```bash
-python pyvterm.py --random                                   # random theme + random font
-python pyvterm.py -t random                                  # any theme
-python pyvterm.py -t random:c64,amiga,gameboy,nes_famicom    # one of these
-python pyvterm.py -f random --cursor random --cursor-fx random2
-python pyvterm.py --bg random3                               # one scene + two see-through layers on top
-python pyvterm.py --effect pick --delete-effect pick         # one random effect for the whole session
+python -m pyterm --random                                   # random theme + random font
+python -m pyterm -t random                                  # any theme
+python -m pyterm -t random:c64,amiga,gameboy,nes_famicom    # one of these
+python -m pyterm -f random --cursor random --cursor-fx random2
+python -m pyterm --bg random3                               # one scene + two see-through layers on top
+python -m pyterm --effect pick --delete-effect pick         # one random effect for the whole session
                                                              # ('random' = a different effect for every letter)
 ```
 
@@ -225,7 +235,7 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 
 * `gpu: auto` (config.yaml) uses the SDL2 GPU renderer: one texture upload per frame, scaling/blending on the GPU,
   vsync. Falls back to software automatically. `--gpu false` forces software.
-* **eco mode**: when nothing animates (no background effect, no running effects, no output) pyvterm stops
+* **eco mode**: when nothing animates (no background effect, no running effects, no output) pyterm stops
   rendering completely and sleeps until input/output arrives — ~0% CPU in the `zen`/`dos` themes.
 * `idle_fps` (30) after 3 s without activity, `unfocused_fps` (15) when the window is in the background,
   `bg_fps` (30) background effects are rendered at their own rate and cached, `fps: 0` = uncapped (vsync).
@@ -234,9 +244,8 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 ## Layout
 
 ```
-pyvterm.py            launcher
-config.yaml           global settings (also read from %APPDATA%\pyvterm / ~/.config/pyvterm)
-pyvterm/              the engine
+python -m pyterm      launcher (or the `pyterm` command after pip install)
+pyterm/               the engine
   vt.py               VT100/xterm parser + screen model (events for the effect engine)
   backend.py          PTY (posix), ConPTY (pywinpty), pipe fallback, demo/file sources
   renderer.py         dirty-row glyph renderer with colored glyph cache
@@ -253,10 +262,14 @@ pyvterm/              the engine
   images.py imgcat.py sixel / kitty / iTerm2 images
   recorder.py         MP4 / GIF export
   shell.py            shell integration injection        shell/*.ps1|bash|zsh
-themes/*.yaml         themes          docs/THEMES.md
-fonts/                your fonts      docs/FONTS.md
-plugins/*.py          plugins         docs/PLUGINS.md
-sounds/<pack>/        optional wav/ogg overrides
+pyterm/data/          bundled assets (shipped in the wheel)
+  config.yaml         global settings (also read from %APPDATA%\pyterm / ~/.config/pyterm)
+  themes/*.yaml       themes          docs/THEMES.md
+  fonts/              fonts           docs/FONTS.md
+  plugins/*.py        plugins         docs/PLUGINS.md
+  sounds/<pack>/      optional wav/ogg overrides
+  shell/              shell integrations (ps1 / bash / zsh)
+docs/                 documentation
 ```
 
 ## Performance notes
@@ -267,11 +280,11 @@ sounds/<pack>/        optional wav/ogg overrides
 * Background effects run at ¼–⅓ resolution and are scaled up (free chunky pixels).
 * Under heavy output: at most `spawn_budget` new effects per frame, effect durations shrink with load, letters that
   scroll away inside the same frame never get effects, and full-screen apps are effect-free.
-* `python pyvterm.py --benchmark` prints parser MB/s and frame times per theme.
+* `python -m pyterm --benchmark` prints parser MB/s and frame times per theme.
 
 ## License
 
-pyvterm is free software: you can redistribute it and/or modify it under the terms of the
+pyterm is free software: you can redistribute it and/or modify it under the terms of the
 **GNU Lesser General Public License, version 3** as published by the Free Software Foundation
 (`LGPL-3.0-only`).
 See [COPYING.LESSER](COPYING.LESSER) and [COPYING](COPYING) (the GPL v3 it builds on).

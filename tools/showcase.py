@@ -1,4 +1,4 @@
-"""Render a showcase video of pyvterm offline (no window needed):
+"""Render a showcase video of pyterm offline (no window needed):
 
     python tools/showcase.py showcase.mp4      (or .gif)
 """
@@ -11,10 +11,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pygame  # noqa: E402
 
-from pyvterm import themes  # noqa: E402
-from pyvterm.app import App  # noqa: E402
-from pyvterm.config import build_config  # noqa: E402
-from pyvterm.recorder import VideoRecorder  # noqa: E402
+from pyterm import themes  # noqa: E402
+from pyterm.app import App  # noqa: E402
+from pyterm.config import build_config  # noqa: E402
+from pyterm.recorder import VideoRecorder  # noqa: E402
 
 FPS = 30
 

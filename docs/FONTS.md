@@ -18,8 +18,8 @@ Any file dropped into `fonts/` shows up in Ctrl+Shift+F cycling and the Studio f
    shift/mirror/invert/bold tools. Every stroke is live in the terminal. *Save font* writes
    `fonts/<name>.png` + `fonts/<name>.yaml` and sets it as the theme font.
 2. Or export any font as a sheet and edit it in Aseprite/GIMP/whatever:
-   `python pyvterm.py -f sys:Consolas -s 16 --no-aa --export-font myfont.png`
-   then edit `fonts/myfont.png` — the font hot-reloads while pyvterm runs with `-f fonts/myfont.yaml`.
+   `python -m pyterm -f sys:Consolas -s 16 --no-aa --export-font myfont.png`
+   then edit `fonts/myfont.png` — the font hot-reloads while pyterm runs with `-f fonts/myfont.yaml`.
 3. "Create (resample current)" in the Studio makes a new cell size from the current font as a starting point.
 
 Box drawing, blocks, shades, braille and powerline glyphs are generated procedurally at any cell size
@@ -50,7 +50,7 @@ letter. The ANSI color still tints the sweep a little (so red error text stays r
 ground), `builtin:scrollergold`, `builtin:scrollerice` — chunky letters with 45° beveled corners, inner bevel,
 2 px outline, drop shadow and a glint sweeping across. Made for sine scrollers: the boot intro and the
 `sine_scroller` plugin (Ctrl+Shift+Z) use them, with every 2-pixel column riding the wave
-(`pyvterm/scroller.py`, `SineScroller`). They also work as a terminal font (`scale: 1`).
+(`pyterm/scroller.py`, `SineScroller`). They also work as a terminal font (`scale: 1`).
 
 **Cute** (`builtin:cute`, 6x11): the small built-in font, calm and friendly — every few seconds a letter does a
 tiny one-pixel hop (each letter at its own moment, never all at once, 6 fps), and the dots of `. ! ?` turn into

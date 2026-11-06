@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyterm"
+dynamic = ["version"]
+description = "Pixel-art 'overkill' terminal emulator in Python + pygame-ce with demoscene themes, letter effects and backgrounds"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "LGPL-3.0-only"
+license-files = ["COPYING", "COPYING.LESSER"]
+keywords = ["terminal", "terminal-emulator", "pygame", "pixel-art", "demoscene", "retro"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Shells",
+    "Topic :: Terminals :: Terminal Emulators/X Terminals",
+]
+dependencies = [
+    "pygame-ce>=2.4",
+    "numpy>=1.21",
+    "pyyaml>=6.0",
+    "pywinpty>=2.0; sys_platform == 'win32'",
+    "pillow>=9.0",
+]
+
+[project.optional-dependencies]
+video = ["imageio-ffmpeg>=0.4"]          # MP4/GIF export (ships an ffmpeg binary)
+mqtt = ["paho-mqtt>=1.6"]                # MQTT / Home Assistant bridge
+all = ["imageio-ffmpeg>=0.4", "paho-mqtt>=1.6"]
+
+[project.urls]
+Homepage = "https://github.com/pez2001/pyterm"
+Repository = "https://github.com/pez2001/pyterm"
+Issues = "https://github.com/pez2001/pyterm/issues"
+
+[project.scripts]
+pyterm = "pyterm.__main__:main"
+
+[tool.setuptools]
+packages = ["pyterm"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pyterm.__version__" }
+
+[tool.setuptools.package-data]
+pyterm = ["data/**/*"]
