@@ -28,6 +28,16 @@ With Home Assistant's MQTT integration (Mosquitto add-on) the terminal appears b
 **Settings → Devices → "pyterm <hostname>"** (MQTT discovery). Each computer is its own device
 (`device_id` defaults to the hostname).
 
+## Upgrading from 1.0.0 (pyvterm)
+
+The project was renamed, so the MQTT defaults changed: `base_topic` is now `pyterm` (was `pyvterm`), and the device,
+unique ids and entity ids start with `pyterm_` instead of `pyvterm_` (e.g. `event.pyterm_mypc_terminal_event`).
+
+* If your `config.yaml` sets `base_topic` explicitly, nothing changes for the topics.
+* Otherwise Home Assistant creates a **new** set of entities. Update your automations to the new entity ids and
+  delete the old, now *unavailable* `pyvterm` device under Settings → Devices & services → MQTT.
+* To keep the old topic and avoid duplicates, set `mqtt: {base_topic: pyvterm}` in `config.yaml`.
+
 ## What Home Assistant gets
 
 | entity | |

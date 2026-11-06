@@ -70,6 +70,8 @@ jobs:
         run: python -m pyterm --help
       - name: Headless smoke test (demo shell)
         run: python tools/ci_smoke.py
+      - name: Settings migration from the 1.0.0 'pyvterm' folder
+        run: python tools/ci_migration.py
 
   clean-venv:
     name: clean venv install (requirements.txt)
