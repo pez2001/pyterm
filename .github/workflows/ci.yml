@@ -25,10 +25,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyflakes
       - name: Byte-compile
-        run: python -m compileall -q pyterm tools
+        run: python -m compileall -q pyterm tools tests
       - name: Pyflakes (undefined names / syntax only)
         run: |
-          if python -m pyflakes pyterm tools | grep -E "undefined name|syntax"; then exit 1; fi
+          if python -m pyflakes pyterm tools tests | grep -E "undefined name|syntax"; then exit 1; fi
       - name: Validate YAML (config + themes)
         run: |
           python - <<'PY'
@@ -68,6 +68,8 @@ jobs:
         run: python -c "import pygame, numpy, yaml, pyterm.app; print('imports ok')"
       - name: CLI help
         run: python -m pyterm --help
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
       - name: Headless smoke test (demo shell)
         run: python tools/ci_smoke.py
       - name: Settings migration from the 1.0.0 'pyvterm' folder
