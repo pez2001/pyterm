@@ -63,11 +63,36 @@ DEFAULTS = {
 }
 
 
-def user_dir():
+def _user_base():
     if sys.platform.startswith('win'):
-        base = os.environ.get('APPDATA') or os.path.expanduser('~')
-        return os.path.join(base, 'pyterm')
-    return os.path.join(os.environ.get('XDG_CONFIG_HOME') or os.path.expanduser('~/.config'), 'pyterm')
+        return os.environ.get('APPDATA') or os.path.expanduser('~')
+    return os.environ.get('XDG_CONFIG_HOME') or os.path.expanduser('~/.config')
+
+
+_migrated = set()
+
+
+def _migrate_legacy(new_dir):
+    """pyterm 1.0.0 was called pyvterm and kept its settings in a 'pyvterm' folder. On first start,
+    copy that folder to the new location (copy, not move - the old folder stays untouched)."""
+    if new_dir in _migrated:
+        return
+    _migrated.add(new_dir)
+    old_dir = os.path.join(os.path.dirname(new_dir), 'pyvterm')
+    if os.path.isdir(new_dir) or not os.path.isdir(old_dir):
+        return
+    try:
+        import shutil
+        shutil.copytree(old_dir, new_dir)
+        print('[pyterm] copied your settings from %s to %s (the old folder was left in place)' % (old_dir, new_dir))
+    except Exception as e:
+        print('[pyterm] could not copy settings from %s: %s' % (old_dir, e))
+
+
+def user_dir():
+    d = os.path.join(_user_base(), 'pyterm')
+    _migrate_legacy(d)
+    return d
 
 
 def load_config_file():

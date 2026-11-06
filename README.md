@@ -182,6 +182,10 @@ pyterm --demo                          # the command is `pyterm`; --demo = built
 
 User themes, fonts and plugins go to `%APPDATA%\pyterm` (Windows) or `~/.config/pyterm` (Linux/macOS).
 
+**Upgrading from 1.0.0** (when the project was called *pyvterm*): on first start pyterm copies your old
+`%APPDATA%\pyvterm` / `~/.config/pyvterm` folder (config, themes, fonts, plugins) to the new location; the old folder
+is left untouched. If you use the Home Assistant / MQTT bridge, see the upgrade note in `docs/HOMEASSISTANT.md`.
+
 From a source checkout instead:
 
 ```bash
