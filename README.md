@@ -1,5 +1,7 @@
 # pyvterm — the pixel-art overkill terminal
 
+[![CI](https://github.com/pez2001/pyvterm/actions/workflows/ci.yml/badge.svg)](https://github.com/pez2001/pyvterm/actions/workflows/ci.yml)
+
 A real, usable terminal emulator for **Windows and Linux**, written in Python + pygame,
 dressed up like a 1992 demoscene production:
 
