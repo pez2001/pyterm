@@ -980,7 +980,7 @@ from .weather import Weather  # noqa: E402
 
 BACKGROUNDS['weather'] = Weather
 
-# living scenes (dollhouse, railway, settlers, discocity)
+# living scenes (railway, settlers, discocity, neonsigns)
 from .scenes import SCENES  # noqa: E402
 
 BACKGROUNDS.update(SCENES)
@@ -1012,3 +1012,8 @@ BACKGROUNDS['stone'] = Stone
 from .cyber import SCENES as CYBER  # noqa: E402
 
 BACKGROUNDS.update(CYBER)
+
+# the little computer people's house
+from .house import Dollhouse  # noqa: E402
+
+BACKGROUNDS['dollhouse'] = Dollhouse

@@ -26,10 +26,14 @@ dressed up like a 1992 demoscene production:
   (a tiny steam loco with turning wheels that puffs smoke while you type) or `settler` (with hammer)
 * **living scenes** that run on your local clock and react to the terminal (typing, Enter, command results,
   output energy):
-  * **computerpeople** — a little resident in a cutaway 3-floor house sleeps, cooks, eats, watches TV, plays
-    piano (notes float up), waters its growing plant, reads and walks the dog; the moment you type it walks
-    over and types on *its* computer. Failed command → 😢/😱, long successful command → it dances 🥳,
-    BEL raises the mailbox flag. Showcase theme: random letter + delete effects, cursor trail, emoji
+  * **computerpeople** — a cute little resident (big head, rosy cheeks, pajamas at night) lives in a cutaway
+    3-floor house on your real clock with a dog and a cat: sleeps, takes a bath and sings, cooks, eats, watches
+    TV, plays the piano, dances to the record player, does jumping jacks, vacuums, waters the plant and the
+    garden (they grow), reads, feeds the pets, plays fetch, watches the stars, waves at you. It **runs to its
+    computer whenever you type** (the monitor shows your last letters, the cat may jump on the desk, fast typing
+    makes it sweat), nods on Enter, throws a confetti party after a long command, gets a fright when one fails
+    (the cat puffs up, the dog barks) and fetches the mail when the bell rings. The cat's head follows your
+    cursor. `bg_params: {dollhouse: {hour: null, shirt: '#e04848', hair: '#6e411e', pets: true, busy: 1.0}}`
   * **trains** — steam trains with spoked wheels & connecting rods chuff past: they brake at the station,
     passengers board, the signal goes red, the level crossing closes (blinking lights, waiting car), they
     rattle over the river bridge and vanish into the tunnel; windmill, cows that *MOO*, birds, day/night with
