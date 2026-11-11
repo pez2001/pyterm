@@ -1,5 +1,5 @@
 name: amber_crt
-description: 1983 monochrome amber monitor - phosphor afterglow, curvature, 2400 baud typewriter
+description: 1983 monochrome amber monitor - everything in shades of amber, phosphor afterglow, curved glass, 2400 baud typewriter
 palette: ['#1a0e00', '#b86a00', '#d08000', '#ffb000', '#9a5a00', '#c07400', '#e09a20', '#ffb000',
           '#5a3400', '#ff9a00', '#ffb84a', '#ffd070', '#c88a30', '#ffaa40', '#ffc860', '#ffe0a0']
 fg: '#ffb000'
@@ -11,6 +11,11 @@ font: builtin
 letter_effect: none
 delete_effect: none
 writer: {mode: baud, baud: 2400}
-crt: {scanlines: 0.55, vignette: 0.9, bloom: 0.8, phosphor: 0.82, flicker: 0.04, noise: 0.35, curvature: 0.6}
+crt: {scanlines: 0.4, vignette: 0.55, bloom: 0.75, phosphor: 0.7, flicker: 0.03, noise: 0.2, curvature: 0.1}
+palette_lock:                 # a monochrome monitor: every color becomes a shade of amber
+  mode: luma
+  dither: 0
+  colors: ['#120900', '#1f1100', '#2e1a00', '#3f2400', '#522f00', '#673c00', '#7e4a00', '#975a00',
+           '#b06b00', '#c97d00', '#e29000', '#ffa600', '#ffb420', '#ffc244', '#ffd16c', '#ffe09a']
 sound: {pack: typewriter, volume: 0.45}
 border: 14

@@ -26,10 +26,14 @@ dressed up like a 1992 demoscene production:
   (a tiny steam loco with turning wheels that puffs smoke while you type) or `settler` (with hammer)
 * **living scenes** that run on your local clock and react to the terminal (typing, Enter, command results,
   output energy):
-  * **computerpeople** — a little resident in a cutaway 3-floor house sleeps, cooks, eats, watches TV, plays
-    piano (notes float up), waters its growing plant, reads and walks the dog; the moment you type it walks
-    over and types on *its* computer. Failed command → 😢/😱, long successful command → it dances 🥳,
-    BEL raises the mailbox flag. Showcase theme: random letter + delete effects, cursor trail, emoji
+  * **computerpeople** — a cute little resident (big head, rosy cheeks, pajamas at night) lives in a cutaway
+    3-floor house on your real clock with a dog and a cat: sleeps, takes a bath and sings, cooks, eats, watches
+    TV, plays the piano, dances to the record player, does jumping jacks, vacuums, waters the plant and the
+    garden (they grow), reads, feeds the pets, plays fetch, watches the stars, waves at you. It **runs to its
+    computer whenever you type** (the monitor shows your last letters, the cat may jump on the desk, fast typing
+    makes it sweat), nods on Enter, throws a confetti party after a long command, gets a fright when one fails
+    (the cat puffs up, the dog barks) and fetches the mail when the bell rings. The cat's head follows your
+    cursor. `bg_params: {dollhouse: {hour: null, shirt: '#e04848', hair: '#6e411e', pets: true, busy: 1.0}}`
   * **trains** — steam trains with spoked wheels & connecting rods chuff past: they brake at the station,
     passengers board, the signal goes red, the level crossing closes (blinking lights, waiting car), they
     rattle over the river bridge and vanish into the tunnel; windmill, cows that *MOO*, birds, day/night with
@@ -121,7 +125,7 @@ dressed up like a 1992 demoscene production:
     (targeting brackets that kick on every key, scan line on Enter), boot splash `uplink` (boot log, key
     cracked digit by digit, ACCESS GRANTED), sound pack `cyber`
 * **interlace** emulation (`crt: {interlace: 0.8}`): alternating fields + motion combing, theme `interlace`
-* backgrounds: plasma, fire, tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
+* backgrounds: plasma, fire (the chunky oldschool one: `bg_params: {fire: {chunk: 6, palette: classic|red|blue|green|purple, height: 1.0}}`, `style: doom` for the fine speckled fire), tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
   shadebobs, rotozoomer, twister, Amiga boing ball, vectorballs, parallax, platformer, invaders, weather, dollhouse, railway, settlers, discocity, neonsigns, watermirror, aquarium, spacestation, garden, pinball, c64load, beach, fireworks, christmas, halloween, easter,
   autumn, sakura, winter, seasonal, stone, zeroday (all stackable)
 * CRT stack: scanlines, vignette, bloom, phosphor afterglow, chromatic aberration, barrel curvature, flicker, noise, glitch
@@ -172,7 +176,7 @@ dressed up like a 1992 demoscene production:
   — and **c64_raw** is the plain version: same screen and exact colors, but no CRT, glow, effects, stripes or sound,
   with a quiet text-only boot (`splash: c64_clean`)
 * retro console themes: **c64**, **amiga**, **nes_famicom**, **gameboy** with matching generated pixel fonts
-  (`builtin:fat8`, `builtin:topaz`, `builtin:thin8`), **palette lock** (everything quantized to the console palette,
+  (`builtin:fat8`, `builtin:topaz`, `builtin:thin8`, `builtin:vga` for the tall DOS text mode), **palette lock** (everything quantized to the console palette,
   optional ordered dithering) and a dot-matrix **LCD** filter
 
 ## Screenshots

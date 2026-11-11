@@ -52,8 +52,9 @@ class SoftwarePresenter:
         else:
             self.win = pygame.display.set_mode(self._win_size, pygame.RESIZABLE)
 
-    def begin(self, area):
-        self.win.fill((0, 0, 0), area)
+    def begin(self, area, dst=None):
+        if dst is None or not dst.contains(area):      # the picture covers the window: nothing to clear
+            self.win.fill((0, 0, 0), area)
 
     def draw_main(self, vs, dst, s, area):
         win = self.win
@@ -148,7 +149,7 @@ class GPUPresenter:
         else:
             self.window.set_windowed()
 
-    def begin(self, area):
+    def begin(self, area, dst=None):
         self.ren.draw_color = (0, 0, 0, 255)
         self.ren.clear()
 

@@ -7,7 +7,9 @@ bg: '#000000'
 cursor: '#aaaaaa'
 cursor_style: underline
 cursor_effects: []
-font: builtin
+bold_bright: true
+font: builtin:vga            # tall 8x16 letters like the VGA text mode
+scale: 2
 letter_effect: none
 delete_effect: none
 crt: {scanlines: 0.2, vignette: 0.25}

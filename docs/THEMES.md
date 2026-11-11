@@ -29,7 +29,7 @@ border: 6                              # margin in virtual pixels
 border_solid: false                    # paint the margin with border_color
 border_color: '#000000'
 border_fx: none                        # none | c64 (loading stripes while busy) | rainbow
-font: builtin                          # builtin | builtin:fat8 | builtin:topaz | builtin:thin8 | builtin:c64narrow | builtin:amiga | builtin:roman | sys:Consolas | fonts/x.ttf|.bdf|.psf|.png|.yaml
+font: builtin                          # builtin | builtin:fat8 | builtin:topaz | builtin:thin8 | builtin:vga | builtin:c64narrow | builtin:amiga | builtin:roman | sys:Consolas | fonts/x.ttf|.bdf|.psf|.png|.yaml
 font_size: 18                          # for TTF fonts
 antialias: true                        # TTF smoothing (false = crisp pixels)
 scale: null                            # pixel scale; null = 2 for pixel fonts, 1 for TTF
@@ -40,6 +40,10 @@ background: [plasma]                   # stack: plasma fire tunnel starfield cop
                                        #        fireworks christmas halloween easter autumn sakura winter seasonal stone zeroday (+plugins)
 bg_dim: 0.4                            # background brightness
 bg_params: {tunnel: {color: [255, 80, 220]}, starfield: {count: 600},
+            dollhouse: {hour: null, shirt: '#e04848', hair: '#6e411e', pets: true, busy: 1.0},   # hour: fix the time of day
+            matrix: {color: '#00ff41', density: 1.0, cell: 8, speed: 1.0},     # cell: 8 or 16 (bigger glyphs)
+            fire: {chunk: 6, palette: classic, height: 1.0, style: classic},   # palette: classic|red|blue|green|purple or
+                                       # ['#000000', ..., '#ffffff'] cold -> hot; style: classic (chunky oldschool) | doom (fine)
             weather: {location: auto, refresh_min: 10, simulate: null},  # location: auto | "Berlin" | [lat, lon]
             watermirror: {level: 0.62, tint: '#5a8cd2', waves: 1.0, speed: 1.0, text: true, sky: auto},
             c64load: {stripes: calm}, seasonal: {force: null},    # stripes: calm|authentic|off, force: halloween ...

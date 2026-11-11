@@ -18,6 +18,13 @@ from .renderer import Renderer
 
 URL_RE = re.compile(r'(https?://|www\.)[^\s<>"\'`]+[^\s<>"\'`.,;:!?)\]]')
 DRAMA_RE = re.compile(r'(?i)\b(error|traceback|fatal|failed|exception|panic)\b')
+DRAMA_WORDS = ('error', 'traceback', 'fatal', 'failed', 'exception', 'panic')
+
+
+def has_drama(data):
+    """error-looking output? (substring test first: the regex alone costs milliseconds on big chunks)"""
+    low = data.lower()
+    return any(w in low for w in DRAMA_WORDS) and DRAMA_RE.search(data) is not None
 _ids = itertools.count(1)
 
 
@@ -184,7 +191,7 @@ class Pane:
             if self.cast:
                 fh, t0, _ = self.cast
                 fh.write(json.dumps([round(time.time() - t0, 4), 'o', data]) + '\n')
-            if not self.screen.using_alt and DRAMA_RE.search(data):
+            if not self.screen.using_alt and has_drama(data):
                 if app.theme.get('drama', True):
                     app.drama(0.5)
                 if getattr(app, 'mqtt', None):          # error events don't depend on the screen-shake setting

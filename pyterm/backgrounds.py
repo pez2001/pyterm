@@ -83,36 +83,105 @@ class Plasma(Background):
         surf.blit(big, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
+FIRE_PALETTES = {
+    # heat 0..1 -> color; the classic one glows violet-blue at its coldest edge like the old VGA fires
+    'classic': [(0, (0, 0, 0)), (0.10, (24, 0, 48)), (0.22, (96, 0, 56)), (0.38, (208, 16, 0)), (0.58, (255, 128, 0)),
+                (0.78, (255, 232, 48)), (1.0, (255, 255, 255))],
+    'red': [(0, (0, 0, 0)), (0.25, (90, 0, 0)), (0.5, (220, 50, 0)), (0.75, (255, 180, 20)), (1.0, (255, 255, 220))],
+    'blue': [(0, (0, 0, 0)), (0.12, (0, 0, 64)), (0.35, (0, 48, 200)), (0.6, (0, 168, 255)), (0.82, (160, 240, 255)),
+             (1.0, (255, 255, 255))],
+    'green': [(0, (0, 0, 0)), (0.12, (0, 32, 24)), (0.35, (0, 136, 24)), (0.6, (96, 232, 0)), (0.82, (224, 255, 96)),
+              (1.0, (255, 255, 255))],
+    'purple': [(0, (0, 0, 0)), (0.12, (24, 0, 56)), (0.35, (120, 0, 184)), (0.6, (232, 48, 216)), (0.82, (255, 176, 232)),
+               (1.0, (255, 255, 255))],
+}
+
+
 class Fire(Background):
+    """the oldschool fire: a coarse heat buffer, random hot spots along the bottom, every cell the
+    average of the cells below it, drawn through a 256-color palette as big chunky pixels.
+
+    bg_params: {fire: {chunk: 6, palette: classic, height: 1.0, style: classic}}
+      chunk    size of one fire pixel in virtual pixels (bigger = chunkier)
+      palette  classic | red | blue | green | purple, or your own list of '#rrggbb' from cold to hot
+      height   flame height (1.0 = about half the screen, more with output)
+      style    classic | doom (the finer, speckled fire pyterm had before)"""
     name = 'fire'
     opaque = True
 
     def resize(self, w, h):
         super().resize(w, h)
-        self.lw, self.lh = max(4, w // 3), max(4, h // 3)
-        self.f = np.zeros((self.lw, self.lh), np.int16)
-        pal = _gradient_palette([(0, (0, 0, 0)), (0.25, (90, 0, 0)), (0.5, (220, 50, 0)),
-                                 (0.75, (255, 180, 20)), (1.0, (255, 255, 220))])
-        self.low = _pal_surface(self.lw, self.lh, pal)
+        self.doom = str(self.p('style', 'classic')) == 'doom'
+        chunk = max(1, int(self.p('chunk', 3 if self.doom else 6) or 1))
+        self.lw, self.lh = max(4, -(-w // chunk)), max(4, -(-h // chunk))
+        self.big = (self.lw * chunk, self.lh * chunk)
+        self.rng = np.random.default_rng()
+        self.acc = 0.0
+        pal = self.p('palette', 'red' if self.doom else 'classic')
+        if isinstance(pal, (list, tuple)) and len(pal) >= 2:
+            try:
+                from .themes import hex2rgb
+                stops = [(i / (len(pal) - 1), tuple(hex2rgb(c))) for i, c in enumerate(pal)]
+            except Exception:
+                stops = FIRE_PALETTES['classic']
+        else:
+            stops = FIRE_PALETTES.get(str(pal), FIRE_PALETTES['classic'])
+        self.low = _pal_surface(self.lw, self.lh, _gradient_palette(stops))
+        if self.doom:
+            self.f = np.zeros((self.lw, self.lh), np.int16)
+            self.xbase = np.arange(self.lw, dtype=np.intp)[:, None] + (self.lw - 1)   # + 0..2 and modulo = drift -1..+1
+            self.ybase = np.arange(self.lh - 1, dtype=np.intp)[None, :]
+        else:
+            self.f = np.zeros((self.lw, self.lh + 2), np.float32)     # two hidden seed rows below the picture
+            self.seed = np.zeros(-(-self.lw // 3), np.float32)
 
     def update(self, dt, energy):
         super().update(dt, energy)
-        f = self.f
-        lw, lh = self.lw, self.lh
-        f[:, -1] = np.random.randint(160 + int(min(energy, 1.5) * 60), 256, lw)
-        steps = 2
-        for _ in range(steps):
+        if self.doom:
+            return self._update_doom(energy)
+        f, lw, lh, rng = self.f, self.lw, self.lh, self.rng
+        e = min(energy, 1.5)
+        # the classic runs at a fixed 30 steps per second, whatever the background frame rate is
+        self.acc = min(3.0, self.acc + dt * 30)
+        # every cell keeps this share of the heat below it: decides how high the flames get
+        keep = 1 - 2.2 / (lh * (0.5 + 0.22 * e) * float(self.p('height', 1.0)) + 4)
+        while self.acc >= 1:
+            self.acc -= 1
+            # hot spots: some of the bottom cells flip between cold and white-hot, the rest keep burning
+            # (spots are a few cells wide, so the flames rise as tongues instead of an even glow)
+            n = len(self.seed)
+            flip = rng.random(n) < 0.35
+            self.seed[flip] = np.where(rng.random(int(flip.sum())) < 0.5 + 0.2 * e, 255.0, 0.0)
+            row = np.repeat(self.seed, 3)[:lw]
+            f[:, lh] = row
+            f[:, lh + 1] = row
+            below = f[:, 1:lh + 1]
+            s = np.roll(below, 1, 0)
+            s += below
+            s += np.roll(below, -1, 0)
+            s += f[:, 2:lh + 2]
+            s *= keep / 4
+            s -= 0.35                                               # so the smoke really ends in black
+            np.maximum(s, 0, out=f[:, :lh])
+
+    def _update_doom(self, energy):
+        f, lw, rng = self.f, self.lw, self.rng
+        f[:, -1] = rng.integers(160 + int(min(energy, 1.5) * 60), 256, lw)
+        cool = 6 if energy < 0.5 else 4
+        for _ in range(2):
             src = f[:, 1:]
-            r = np.random.randint(0, 3, src.shape)
-            xs = (np.arange(lw)[:, None] + r - 1) % lw
-            shifted = src[xs, np.arange(lh - 1)[None, :]]
-            decay = np.random.randint(0, 6 if energy < 0.5 else 4, src.shape)
-            f[:, :-1] = np.maximum(shifted - decay * 2, 0)
+            rnd = rng.integers(0, 256, (2,) + src.shape, dtype=np.uint8)   # one bulk draw: sideways drift + cooling
+            xs = self.xbase + rnd[0] % 3
+            np.remainder(xs, lw, out=xs)
+            shifted = src[xs, self.ybase]
+            shifted -= (rnd[1] % cool) * np.int16(2)
+            np.maximum(shifted, 0, out=f[:, :-1])
 
     def draw(self, surf, first):
-        pygame.surfarray.blit_array(self.low, np.clip(self.f, 0, 255).astype(np.uint8))
-        big = pygame.transform.scale(self.low, (self.w, self.h))
-        surf.blit(big, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
+        heat = self.f if self.doom else self.f[:, :self.lh]
+        pygame.surfarray.blit_array(self.low, np.clip(heat, 0, 255).astype(np.uint8))
+        big = pygame.transform.scale(self.low, self.big)
+        surf.blit(big, (0, self.h - self.big[1]), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
 class Tunnel(Background):
@@ -255,37 +324,101 @@ class Grid(Background):
                 pygame.draw.line(surf, col, (0, y), (w, y))
 
 
+def _rain_glyphs(n=48, seed=7):
+    """n made-up 8x8 glyphs built from a few strokes each - they read like the mirrored katakana of the film"""
+    rng = random.Random(seed)
+    out = np.zeros((n, 8, 8), bool)
+    for g in out:
+        for _ in range(rng.randint(2, 4)):
+            k = rng.random()
+            if k < 0.4:                                   # horizontal bar
+                y, x0 = rng.choice((1, 3, 4, 6)), rng.randint(1, 3)
+                g[x0:rng.randint(x0 + 3, 7), y] = True
+            elif k < 0.8:                                 # vertical bar
+                x, y0 = rng.choice((1, 3, 4, 6)), rng.randint(1, 3)
+                g[x, y0:rng.randint(y0 + 3, 7)] = True
+            else:                                         # diagonal
+                x, y, d = rng.randint(1, 3), rng.randint(1, 3), rng.choice((1, -1))
+                for i in range(4):
+                    g[min(6, x + i), min(6, max(1, y + (i if d > 0 else 3 - i)))] = True
+    return out
+
+
 class Matrix(Background):
+    """digital rain: glyphs stay where they are and light up as a drop passes - a white head, a green
+    tail that fades out, and glyphs that keep changing while they glow.
+
+    bg_params: {matrix: {color: '#00ff41', density: 1.0, cell: 8, speed: 1.0}}"""
     name = 'matrix'
 
     def resize(self, w, h):
         super().resize(w, h)
-        self.cell = 8
-        self.ncol = w // self.cell + 1
-        self.heads = np.random.uniform(-h, h, self.ncol)
-        self.speed = np.random.uniform(40, 160, self.ncol)
-        self.layer = pygame.Surface((w, h))
-        self.layer.fill((0, 0, 0))
-        self.font = pygame.font.Font(None, 12)
-        pool = '0123456789ABCDEFZ$#*+<>=:|'
-        self.glyphs = [self.font.render(c, False, (40 + 30 * k, 255 - 40 * k, 90)) for c in pool for k in range(3)]
-        self.white = [self.font.render(c, False, (230, 255, 230)) for c in pool]
+        self.cell = c = 8 * max(1, int(self.p('cell', 8) or 8) // 8)
+        self.k = c // 8
+        self.cols, self.rows = w // c + 1, h // c + 1
+        self.glyphs = _rain_glyphs()
+        self.rng = np.random.default_rng()
+        self.grid = self.rng.integers(0, len(self.glyphs), (self.cols, self.rows))
+        self.heat = np.zeros((self.cols, self.rows), np.float32)
+        n = max(1, int(self.cols * 2.2 * float(self.p('density', 1.0) or 0)))
+        self.dcol = self.rng.integers(0, self.cols, n)
+        self.dy = self.rng.uniform(-self.rows, self.rows, n).astype(np.float32)
+        self.dv = self.rng.uniform(6, 22, n).astype(np.float32)
+        self.fade = self.rng.uniform(0.22, 0.7, self.cols).astype(np.float32)     # tail length differs per column
+        col = self.p('color', None)
+        try:
+            from .themes import hex2rgb
+            col = tuple(hex2rgb(col)) if isinstance(col, str) else tuple(int(v) for v in col[:3])
+        except Exception:
+            col = (0, 255, 65)
+        pal = []
+        for i in range(256):                              # 0 black .. 200 full color .. 255 white head
+            if i <= 200:
+                f = (i / 200) ** 1.15
+                pal.append(tuple(int(v * f) for v in col))
+            else:
+                f = (i - 200) / 55
+                pal.append(tuple(int(v + (255 - v) * f) for v in col))
+        self.low = _pal_surface(self.cols * 8, self.rows * 8, pal)
 
     def update(self, dt, energy):
         super().update(dt, energy)
-        self.heads += self.speed * dt * (1 + energy)
-        m = self.heads > self.h + 50
-        self.heads[m] = np.random.uniform(-200, 0, int(m.sum()))
-        self.layer.fill((228, 238, 228), special_flags=pygame.BLEND_RGB_MULT)
-        for i in range(self.ncol):
-            if random.random() < 0.6:
-                y = int(self.heads[i] // self.cell * self.cell)
-                if 0 <= y < self.h:
-                    self.layer.blit(random.choice(self.glyphs), (i * self.cell, y))
-                    self.layer.blit(random.choice(self.white), (i * self.cell, y + self.cell))
+        dt = min(dt, 0.1)
+        rng, heat = self.rng, self.heat
+        sp = (0.55 + min(2.0, energy) * 0.9) * float(self.p('speed', 1.0) or 1.0)
+        heat -= dt * self.fade[:, None] * (0.8 + sp * 0.6)
+        np.maximum(heat, 0, out=heat)
+        old = self.dy.astype(np.int32)
+        self.dy += self.dv * dt * sp
+        new = self.dy.astype(np.int32)
+        for step in range(int((new - old).max()) + 1 if len(new) else 0):   # light every row a drop crossed
+            y = old + 1 + step
+            m = (y <= new) & (y >= 0) & (y < self.rows)
+            heat[self.dcol[m], y[m]] = 1.0
+        done = new > self.rows + 2
+        k = int(done.sum())
+        if k:
+            self.dy[done] = rng.uniform(-self.rows * 0.6, 0, k)
+            self.dcol[done] = rng.integers(0, self.cols, k)
+            self.dv[done] = rng.uniform(6, 22, k)
+        flip = rng.random(heat.shape) < dt * 1.2                             # glowing glyphs keep changing
+        flip &= heat > 0.05
+        k = int(flip.sum())
+        if k:
+            self.grid[flip] = rng.integers(0, len(self.glyphs), k)
+        self.head = (self.dcol, np.clip(new, 0, self.rows - 1), (new >= 0) & (new < self.rows))
 
     def draw(self, surf, first):
-        surf.blit(self.layer, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
+        lvl = (self.heat * 200).astype(np.uint8)
+        hc, hy, ok = getattr(self, 'head', (None, None, None))
+        if hc is not None:
+            lvl[hc[ok], hy[ok]] = 255
+        # cells -> pixels: every cell shows its glyph in its brightness
+        img = self.glyphs[self.grid] * lvl[:, :, None, None]                 # (cols, rows, 8, 8)
+        img = img.transpose(0, 2, 1, 3).reshape(self.cols * 8, self.rows * 8)
+        pygame.surfarray.blit_array(self.low, img)
+        src = self.low if self.k == 1 else pygame.transform.scale(self.low, (self.cols * self.cell, self.rows * self.cell))
+        surf.blit(src, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
 class Metaballs(Background):
@@ -911,7 +1044,7 @@ from .weather import Weather  # noqa: E402
 
 BACKGROUNDS['weather'] = Weather
 
-# living scenes (dollhouse, railway, settlers, discocity)
+# living scenes (railway, settlers, discocity, neonsigns)
 from .scenes import SCENES  # noqa: E402
 
 BACKGROUNDS.update(SCENES)
@@ -943,3 +1076,8 @@ BACKGROUNDS['stone'] = Stone
 from .cyber import SCENES as CYBER  # noqa: E402
 
 BACKGROUNDS.update(CYBER)
+
+# the little computer people's house
+from .house import Dollhouse  # noqa: E402
+
+BACKGROUNDS['dollhouse'] = Dollhouse

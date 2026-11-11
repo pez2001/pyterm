@@ -249,8 +249,8 @@ class ZeroDay(Background):
         self.base = np.concatenate([np.ones(len(land), np.float32), np.full(len(grat), 0.22, np.float32)])
         self.nland = len(land)
         D = 2 * self.R + 3
-        self.gbuf = np.zeros((D, D, 3), np.uint8)
-        self.gsurf = pygame.Surface((D, D))
+        self.gsurf = pygame.Surface((D, D), 0, 32)
+        self._lut_col = None
         self.cities = [(n, _vec(la, lo), la, lo) for n, la, lo in CITIES]
         home = self.p('home', None)
         try:
@@ -320,7 +320,7 @@ class ZeroDay(Background):
         for y in range(32):
             k = y / 31
             col.set_at((0, y), (int(3 - 2 * k), int(7 - 4 * k), int(16 - 9 * k)))
-        self.back = pygame.transform.smoothscale(col, (w, h))
+        back = pygame.transform.smoothscale(col, (w, h))
         st = pygame.Surface((w, h))
         st.fill((0, 0, 0))
         st.set_colorkey((0, 0, 0))
@@ -368,7 +368,17 @@ class ZeroDay(Background):
                 for i in range(1, 4):                              # scope graticule
                     for x in range(sr.x + 3, sr.right - 3, 4):
                         st.set_at((x, sr.y + i * sr.h // 4), _mul(ac, 0.14))
-        self.static = st
+        back.blit(st, (0, 0))
+        self.backdrop = back
+        # rain falls behind the glass ball: per column, the rows the disc covers
+        self.disc = {}
+        if self.show_globe:
+            R1 = self.R + 1
+            for x in range(0, w, 4):
+                dx = x + 1 - self.gx
+                if abs(dx) < R1:
+                    half = int(math.sqrt(R1 * R1 - dx * dx))
+                    self.disc[x] = (self.gy - half, self.gy + half + 1)
 
     # ------------------------------------------------------------ helpers
     def _proj(self, v):
@@ -514,26 +524,32 @@ class ZeroDay(Background):
         if self.scan is not None:
             b += np.exp(-((p[:, 1] - self.scan) / 0.07) ** 2) * 1.4 * np.where(front, 1.0, 0.25)
         n = self.nland
-        flick = np.random.random(n) < 0.004 + min(2.0, signals.energy) * 0.02
         col = self.accent
         if self.alert > 0:
             col = _mix(col, self.alert_col, min(1.0, self.alert))
         elif self.grant > 0:
             col = _mix(col, self.ok_col, self.grant)
-        rgb = np.clip(b[:, None] * np.array(col, np.float32), 0, 255)
-        rgb[:n][flick & front[:n]] = (255, 255, 255)
-        rgb = rgb.astype(np.uint8)
-        sx = np.clip((p[:, 0] * R + R + 1).astype(np.int32), 0, 2 * R + 2)
-        sy = np.clip((R + 1 - p[:, 1] * R).astype(np.int32), 0, 2 * R + 2)
-        buf = self.gbuf
-        buf[:] = 0
+        if col != self._lut_col:                                  # brightness 0..2 -> packed pixel, entry 256 = white
+            self._lut_col = col
+            k = np.arange(256, dtype=np.float32)[:, None] / 127.5
+            c = np.minimum(k * np.array(col, np.float32), 255).astype(np.uint32)
+            rs, gs, bs, _ = self.gsurf.get_shifts()
+            self._lut = np.append((c[:, 0] << rs) | (c[:, 1] << gs) | (c[:, 2] << bs), self.gsurf.map_rgb((255, 255, 255))).astype(np.uint32)
+        idx = np.minimum(b * 127.5, 255).astype(np.intp)
+        flick = np.random.random(n) < 0.004 + min(2.0, signals.energy) * 0.02
+        idx[:n][flick & front[:n]] = 256
+        val = self._lut[idx]
+        sx = np.clip((p[:, 0] * R + (R + 1)).astype(np.intp), 0, 2 * R + 2)
+        sy = np.clip(((R + 1) - p[:, 1] * R).astype(np.intp), 0, 2 * R + 2)
+        self.gsurf.fill(0)
+        px = pygame.surfarray.pixels2d(self.gsurf)
         back = ~front
-        buf[sx[back], sy[back]] = rgb[back]
-        buf[sx[front], sy[front]] = rgb[front]
+        px[sx[back], sy[back]] = val[back]
+        px[sx[front], sy[front]] = val[front]
         if R >= 120:                                              # big globe: land dots two pixels wide
             lf = front[:n]
-            buf[np.minimum(sx[:n][lf] + 1, 2 * R + 2), sy[:n][lf]] = rgb[:n][lf]
-        pygame.surfarray.blit_array(self.gsurf, buf)
+            px[np.minimum(sx[:n][lf] + 1, 2 * R + 2), sy[:n][lf]] = val[:n][lf]
+        del px
         surf.blit(self.gsurf, (gx - R - 1, gy - R - 1), special_flags=ADD)
 
     def _draw_net(self, surf):
@@ -705,11 +721,21 @@ class ZeroDay(Background):
     def draw(self, surf, first):
         w, h = self.w, self.h
         if first:
-            surf.blit(self.back, (0, 0))
+            surf.blit(self.backdrop, (0, 0))
+        else:
+            surf.blit(self.backdrop, (0, 0), special_flags=ADD)
+        disc = self.disc
         for x, y, _, i in self.drops:
             s = self.strips[i]
-            surf.blit(s, (x, int(y) // 6 * 6), special_flags=ADD)
-        surf.blit(self.static, (0, 0))
+            y = int(y) // 6 * 6
+            d = disc.get(x)
+            if d is None or y >= d[1] or y + s.get_height() <= d[0]:
+                surf.blit(s, (x, y), special_flags=ADD)
+            else:
+                if y < d[0]:
+                    surf.blit(s, (x, y), (0, 0, 3, d[0] - y), special_flags=ADD)
+                if y + s.get_height() > d[1]:
+                    surf.blit(s, (x, d[1]), (0, d[1] - y, 3, y + s.get_height() - d[1]), special_flags=ADD)
         if self.show_globe:
             self._draw_globe(surf)
             self._draw_net(surf)

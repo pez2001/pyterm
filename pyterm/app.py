@@ -1274,7 +1274,7 @@ class App:
             dx += random.randint(-m, m)
             dy += random.randint(-m, m)
         dst = pygame.Rect(dx, dy, dw, dh)
-        pr.begin(area)
+        pr.begin(area, dst)
         pr.draw_main(vs, dst, self.s, area)
         if not self.intro:
             for p in panes:
