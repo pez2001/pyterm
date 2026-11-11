@@ -26,6 +26,7 @@ SHOTS = [
     ('inferno', 'inferno', 'error', 3.0),
     ('gameboy', 'gameboy', 'info', 2.5),
     ('weather', 'weather', 'weather', 5.0),
+    ('zeroday', 'zeroday', 'hack', 3.0),
 ]
 
 

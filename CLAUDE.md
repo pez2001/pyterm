@@ -11,7 +11,7 @@ The user is on Windows (PowerShell), window ~1600x1000.
 - Headless check: set `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy`, build `App(*build_config([...,'--demo','--gpu','false']))`,
   call `app.frame(1/30)` in a loop, save `app.presenter.frame_surface()` with `pygame.image.save`.
   Set `App._demo_used = True` and `cfg['intro'] = False` to skip the splash.
-- Demo shell commands: `help`, `themes`, `effects`, `bgs`, `cursors`, `splash NAME`, `alarm NAME msg`, `sixel`, `info` …
+- Demo shell commands: `help`, `themes`, `effects`, `bgs`, `cursors`, `splash NAME`, `alarm NAME msg`, `sixel`, `info`, `hack` …
 
 ## Layout (pyterm/)
 - `app.py` – App: window, event loop (eco mode = no render when idle; `anim_until` forces frames), layout
@@ -20,7 +20,7 @@ The user is on Windows (PowerShell), window ~1600x1000.
 - `vt.py` – VT/xterm parser (`Screen`), sixel layer on alt screen, XTWINOPS, OSC 7/52/133/1337
 - `renderer.py` – glyph cache, row rendering; `bg_alpha` (default cells), `cell_bg_alpha` (colored cells)
 - `effects.py` – letter appear (`APPEAR`) / vanish (`VANISH`) effects; `fx.near` limits effects to typed cells
-- `backgrounds.py` (+ `scenes.py`, `scenes2.py`, `seasons*.py`, `water.py`, `roman.py`, `weather.py`) – `Background` layers:
+- `backgrounds.py` (+ `scenes.py`, `scenes2.py`, `seasons*.py`, `water.py`, `roman.py`, `weather.py`, `cyber.py`) – `Background` layers:
   `resize`, `update(dt, energy)`, `draw(surf, first)`, `self.p(key, default)` reads `bg_params`
 - `signals.py` – blackboard between terminal and scenes (typing, enter, bell, cmd, letters, typing_speed, shake)
 - `fonts.py` – builtin pixel fonts (`builtin:*`), colored fonts, TTF; `cursors.py`; `splash.py`; `scroller.py`

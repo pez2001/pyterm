@@ -520,14 +520,46 @@ class Chisel(Appear):
             surf.fill((255, 246, 220), (int(ox + x), int(oy + y), 1, 1))
 
 
+class Breach(Appear):
+    """the cell is breached: raw bits, then hex under a targeting bracket and a scan line,
+    then the real letter snaps in with an RGB split and cools from white to its color"""
+    name = 'breach'
+    duration = 0.5
+    HEX = '0123456789ABCDEF'
+    CY, MG = (0, 255, 208), (255, 48, 128)
+
+    def draw(self, surf, ox, oy):
+        k = self.k
+        x, y = ox + self.px, oy + self.py
+        cw, ch = self.cw, self.ch
+        col = self.m.renderer.colored
+        if k < 0.3:
+            surf.blit(col(random.choice('01'), self.style, False, (0, 120, 100)), (x, y))
+        elif k < 0.68:
+            surf.blit(col(random.choice(self.HEX), self.style, False, self.CY), (x, y))
+        elif k < 0.88:
+            a = 1 + int((0.88 - k) * 12)
+            surf.blit(col(self.c, self.style, False, self.CY), (x - a, y), special_flags=pygame.BLEND_RGB_ADD)
+            surf.blit(col(self.c, self.style, False, self.MG), (x + a, y), special_flags=pygame.BLEND_RGB_ADD)
+            surf.blit(col(self.c, self.style, False, (255, 255, 255)), (x, y))
+        else:
+            surf.blit(self.glyph(quant(lerp_rgb((255, 255, 255), self.rgb, (k - 0.88) / 0.12))), (x, y))
+        if k < 0.88:
+            surf.fill((0, 96, 80), (x, y + int(k / 0.88 * (ch - 1)), cw, 1), special_flags=pygame.BLEND_RGB_ADD)
+            if k >= 0.3:                                    # targeting bracket
+                c = (0, 150, 124)
+                for bx, by in ((x, y), (x + cw - 2, y), (x, y + ch - 1), (x + cw - 2, y + ch - 1)):
+                    surf.fill(c, (bx, by, 2, 1))
+
+
 class Random(Appear):
     name = 'random'
 
 
 APPEAR = {c.name: c for c in (Instant, Flame, Laser, Sand, Dissolve, Construction, Teleport, Fluid,
-                              Decrypt, Drop, Glitch, Pop, Bump, Shoot, Puff, Neon, Chisel)}
+                              Decrypt, Drop, Glitch, Pop, Bump, Shoot, Puff, Neon, Chisel, Breach)}
 RANDOM_POOL = ['flame', 'laser', 'sand', 'dissolve', 'construction', 'teleport', 'fluid', 'decrypt', 'drop', 'glitch',
-               'pop', 'bump', 'puff', 'neon', 'chisel']
+               'pop', 'bump', 'puff', 'neon', 'chisel', 'breach']
 
 
 # ============================================================================ vanish
@@ -708,14 +740,30 @@ def v_crumble(m, x, vy, c, attr):
                      life=np.random.uniform(0.5, 1.2, n).astype(np.float32), col=(64, 60, 50), pal=P.FADE, add=True)
 
 
+def v_derez(m, x, vy, c, attr):
+    """de-rezzed: a white flash, then the letter's scan lines are torn apart sideways -
+    even rows to the left in cyan, odd rows to the right in magenta"""
+    X, Y, rgb = _glyph_px(m, c, attr, x, vy)
+    n = len(X)
+    if not n:
+        return
+    row = (Y - vy * m.ch).astype(np.int32)
+    odd = (row & 1).astype(np.float32)
+    sp = (np.random.randint(2, 8, n) * 28).astype(np.float32)
+    col = np.where(odd[:, None] > 0, np.float32((255, 48, 128)), np.float32((0, 255, 208)))
+    m.particles.emit(n, X, Y, life=0.09, col=(255, 255, 255), pal=P.FADE, add=True)
+    m.particles.emit(n, X, Y, vx=(odd * 2 - 1) * sp, drag=2.5, life=np.random.uniform(0.25, 0.6, n).astype(np.float32),
+                     col=col, pal=P.FADE, add=True, delay=(row / max(1, m.ch) * 0.12).astype(np.float32))
+
+
 def v_random(m, x, vy, c, attr):
     random.choice(_VANISH_POOL)(m, x, vy, c, attr)
 
 
 VANISH = {'none': None, 'random': v_random, 'spark': v_spark, 'crumble': v_crumble, 'firework': v_firework, 'leaves': v_leaves,
           'snow': v_snow, 'petals': v_petals, 'shatter': v_shatter, 'dust': v_dust, 'burn': v_burn, 'melt': v_melt,
-          'rainbow': v_rainbow, 'bricks': v_bricks, 'invader': v_invader}
-_VANISH_POOL = [v_crumble, v_firework, v_spark, v_shatter, v_dust, v_burn, v_melt, v_rainbow, v_bricks, v_invader]
+          'rainbow': v_rainbow, 'bricks': v_bricks, 'invader': v_invader, 'derez': v_derez}
+_VANISH_POOL = [v_crumble, v_firework, v_spark, v_shatter, v_dust, v_burn, v_melt, v_rainbow, v_bricks, v_invader, v_derez]
 
 
 # ============================================================================ manager

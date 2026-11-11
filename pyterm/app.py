@@ -20,7 +20,7 @@ from .sound import Sound
 
 WRITER_MODES = ['smart', 'instant', 'baud', 'human']
 BAUDS = [300, 1200, 2400, 9600, 19200, 57600, 115200]
-SOUND_PACKS = ['chime', 'typewriter', '8bit', 'glass', 'off']
+SOUND_PACKS = ['chime', 'typewriter', '8bit', 'glass', 'cyber', 'off']
 
 HELP = [
     ('Ctrl+Shift+H', 'this help'), ('Ctrl+Shift+F12', 'Studio (theme/font/plugin editor)'),
@@ -586,7 +586,7 @@ class App:
                 val = tmp[key]
                 args = [','.join(val) if isinstance(val, list) else val] + list(args[1:])
         simple = {'help': demo.HELP, 'colors': demo.color_table, 'boxes': demo.boxes, 'art': demo.ansi_art,
-                  'braille': demo.braille_wave, 'logo': demo.logo, 'info': demo.sysinfo,
+                  'braille': demo.braille_wave, 'logo': demo.logo, 'info': demo.sysinfo, 'hack': demo.hack,
                   'lorem': demo.LOREM + '\r\n', 'clear': '\x1b[2J\x1b[3J\x1b[H', 'image': demo.image_demo,
                   'sixel': lambda: demo.image_demo('sixel'), 'kitty': lambda: demo.image_demo('kitty')}
         if c in simple:
@@ -759,7 +759,8 @@ class App:
             from . import cursors
             cur = self.pane.cursor.name if self.pane.cursor else th.get('cursor_style', 'block')
             if mods & K.KMOD_ALT:     # Alt: cycle cursor effect sets
-                sets = [[], ['glow'], ['glow', 'trail'], ['ripple'], ['orbit', 'glow'], ['sparkle', 'trail'], ['smoke']]
+                sets = [[], ['glow'], ['glow', 'trail'], ['ripple'], ['orbit', 'glow'], ['sparkle', 'trail'], ['smoke'],
+                        ['reticle', 'glow']]
                 curfx = self.cfg.get('cursor_effects')
                 curfx = list(th.get('cursor_effects') or []) if curfx is None else list(curfx)
                 i = sets.index(curfx) if curfx in sets else -1

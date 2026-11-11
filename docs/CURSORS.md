@@ -44,6 +44,7 @@ EMERALD MINE mode always uses `miner`. Character styles (`character = True`) sta
 | `sparkle` | `rate`, `color` | twinkling stars hover around it |
 | `orbit` | `count`, `color` | satellites circle the cursor, faster while you type |
 | `smoke` | | gray puffs rise while you type |
+| `reticle` | `size`, `color` | targeting brackets lock onto the cursor, kick outwards on every key, scan line along the row on Enter |
 
 Plugin `cursor_demo.py` adds the style `ghost` and the effect `comet`.
 

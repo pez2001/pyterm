@@ -6,6 +6,7 @@ Built in:
   c64    a Commodore 64 powering up: READY., LOAD"$",8,1 / LIST / LOAD"PYTERM",8,1 with the
          loading stripes and a picture building up, then RUN
   c64_clean  the same boot as plain text: no loading stripes, no picture
+  uplink a hacker's deck coming online: boot log, uplink key cracked digit by digit, ACCESS GRANTED
   none   straight to the terminal
 
 Write your own (plugin):
@@ -287,7 +288,147 @@ class C64Clean(C64Boot):
         return out
 
 
-SPLASHES = {'demo': DemoSplash, 'c64': C64Boot, 'c64_clean': C64Clean, 'none': None}
+# ============================================================================ uplink
+class Uplink(Splash):
+    """a hacker's deck coming online: boot log, an uplink key cracked digit by digit,
+    ACCESS GRANTED in big glitching letters, shutter wipe to the shell"""
+    name = 'uplink'
+    duration = 5.4
+    HEX = '0123456789ABCDEF'
+    CY, MG, GR, DIM = (0, 255, 208), (255, 48, 128), (60, 255, 120), (0, 120, 100)
+    LOG = [('', 'ZERODAY//OS 9.1   kernel 6.66-ghost   deck online'),
+           ('OK', 'entropy pool seeded'),
+           ('OK', 'mac address spoofed    de:ad:be:ef:13:37'),
+           ('OK', 'onion circuit built    3 hops  NL > IS > CH'),
+           ('OK', 'tunnel up              wg0  10.66.6.1'),
+           ('OK', 'satellite relay        SAT-7  lock'),
+           ('..', 'cracking uplink key')]
+    T_LOG, T_KEY, T_GRANT, T_WIPE = 0.24, 1.9, 3.7, 4.95
+
+    def start(self):
+        self.key = ''.join(random.choice(self.HEX) for _ in range(16))
+        self.big = {}
+        self.said = set()
+        self.rain = [[random.randrange(0, max(1, self.w)), random.uniform(-self.h, self.h), random.uniform(40, 140)]
+                     for _ in range(max(8, self.w // 14))]
+
+    def _beep(self, tag, kind, **kw):
+        if tag not in self.said:
+            self.said.add(tag)
+            if self.sound:
+                self.sound.play(kind, **kw)
+
+    def update(self, dt):
+        super().update(dt)
+        for r in self.rain:
+            r[1] += r[2] * dt
+            if r[1] > self.h:
+                r[1] = -random.uniform(10, self.h * 0.5)
+                r[0] = random.randrange(0, max(1, self.w))
+        t = self.t
+        n = min(len(self.LOG), int(t / self.T_LOG))
+        if n:
+            self._beep('log%d' % n, 'key', pitch=n * 2, min_gap=0)
+        if self.T_KEY < t < self.T_GRANT:
+            self._beep('key%d' % int((t - self.T_KEY) / (self.T_GRANT - self.T_KEY) * 16), 'key', pitch=int(t * 40), min_gap=0)
+        if t >= self.T_GRANT:
+            self._beep('grant', 'boot', min_gap=0)
+
+    def _text(self, surf, colored, x, y, s, rgb):
+        cw = self.font.cw
+        for i, c in enumerate(s):
+            if c != ' ':
+                surf.blit(colored(c, 0, False, rgb), (x + i * cw, y))
+
+    def _big(self, colored, s, rgb, n):
+        key = (s, rgb, n)
+        b = self.big.get(key)
+        if b is None:
+            cw, ch = self.font.cw, self.font.ch
+            b = pygame.Surface((len(s) * cw, ch))
+            b.fill((0, 0, 0))
+            self._text(b, colored, 0, 0, s, rgb)
+            b = pygame.transform.scale(b, (b.get_width() * n, b.get_height() * n))
+            self.big[key] = b
+        return b
+
+    def draw(self, surf, colored):
+        w, h, t = self.w, self.h, self.t
+        cw, ch = self.font.cw, self.font.ch
+        surf.fill((2, 4, 9))
+        for x, y, v in self.rain:                              # falling data streaks
+            c = int(v * 0.35)
+            surf.fill((0, c, int(c * 0.8)), (x, int(y), 1, int(v * 0.12)))
+        cols = max(20, w // cw)
+        x0 = max(cw, (w - min(cols - 2, 54) * cw) // 2)
+        y0 = max(ch, int(h * 0.16))
+        ADD = pygame.BLEND_RGB_ADD
+        if t < self.T_GRANT + 0.25:
+            for i, (tag, line) in enumerate(self.LOG):
+                age = t - i * self.T_LOG
+                if age < 0:
+                    break
+                y = y0 + i * (ch + 2)
+                if tag:
+                    done = tag == 'OK' or t >= self.T_GRANT
+                    self._text(surf, colored, x0, y, '[', self.DIM)
+                    self._text(surf, colored, x0 + cw, y, ' OK ' if done else (' .. ', ' ·· ')[int(t * 6) % 2], self.GR if done else self.MG)
+                    self._text(surf, colored, x0 + 5 * cw, y, ']', self.DIM)
+                    shown = line[:int(age * 90)]
+                    self._text(surf, colored, x0 + 7 * cw, y, shown, self.CY)
+                else:
+                    self._text(surf, colored, x0, y, line[:int(age * 90)], (255, 255, 255))
+            if t >= self.T_KEY:                                # the key locks in digit by digit
+                k = min(1.0, (t - self.T_KEY) / (self.T_GRANT - self.T_KEY))
+                locked = int(k * 16)
+                y = y0 + (len(self.LOG) + 1) * (ch + 2)
+                self._text(surf, colored, x0, y, 'KEY', self.DIM)
+                for i in range(16):
+                    gx = x0 + (5 + i * 2 + i // 4) * cw
+                    if i < locked:
+                        self._text(surf, colored, gx, y, self.key[i], (255, 255, 255) if i == locked - 1 else self.GR)
+                    else:
+                        self._text(surf, colored, gx, y, random.choice(self.HEX), self.DIM)
+                bw = min(w - 2 * x0, 40 * cw)
+                y += ch + 4
+                pygame.draw.rect(surf, self.DIM, (x0, y, bw, ch), 1)
+                surf.fill(self.CY, (x0 + 2, y + 2, int((bw - 4) * k), ch - 4))
+                self._text(surf, colored, x0 + bw + cw, y, '%3d%%' % int(k * 100), self.CY)
+        if t >= self.T_GRANT:                                  # ACCESS GRANTED
+            g = t - self.T_GRANT
+            surf.fill((0, 0, 0), (0, 0, w, h)) if g > 0.25 else None
+            for x, y, v in self.rain:
+                c = int(v * 0.5)
+                surf.fill((0, c, int(c * 0.6)), (x, int(y), 1, int(v * 0.2)))
+            n = max(1, min(4, (w - 2 * cw) // (14 * cw)))
+            lines = ['ACCESS GRANTED'] if n > 1 or w >= 14 * cw else ['ACCESS', 'GRANTED']
+            a = int(max(0.0, 0.5 - g) * 24) + (random.randint(1, 3) if random.random() < 0.12 else 0)
+            for li, s in enumerate(lines):
+                bx = (w - len(s) * cw * n) // 2
+                by = h // 2 - (len(lines) * ch * n) // 2 + li * ch * n + (random.randint(-2, 2) if a > 3 else 0)
+                if a:
+                    surf.blit(self._big(colored, s, self.CY, n), (bx - a, by), special_flags=ADD)
+                    surf.blit(self._big(colored, s, self.MG, n), (bx + a, by), special_flags=ADD)
+                surf.blit(self._big(colored, s, (255, 255, 255) if g < 0.5 else self.GR, n), (bx, by),
+                          special_flags=ADD if a else 0)
+            sub = 'welcome back, operator'
+            if g > 0.45:
+                self._text(surf, colored, (w - len(sub) * cw) // 2, h // 2 + ch * n, sub[:int((g - 0.45) * 60)], self.CY)
+            yb = h // 2 - ch * n - 6
+            lw = int(min(1.0, g * 3) * w * 0.4)
+            surf.fill(self.GR, (w // 2 - lw, yb, lw * 2, 1))
+            surf.fill(self.GR, (w // 2 - lw, h - yb + ch, lw * 2, 1))
+            if g < 0.18:
+                v = int(200 * (1 - g / 0.18))
+                surf.fill((v // 3, v, v // 2), special_flags=ADD)
+        if t >= self.T_WIPE:                                   # shutter wipe
+            k = min(1.0, (t - self.T_WIPE) / (self.duration - self.T_WIPE))
+            bar = max(4, h // 12)
+            for y in range(0, h, bar):
+                surf.fill((0, 0, 0), (0, y, w, int(bar * k) + 1))
+
+
+SPLASHES = {'demo': DemoSplash, 'c64': C64Boot, 'c64_clean': C64Clean, 'uplink': Uplink, 'none': None}
 
 
 def make_splash(app):

@@ -105,6 +105,23 @@ def logo():
     return '\r\n'.join(out) + '\r\n'
 
 
+def hack():
+    """a movie-style break-in (pure fiction, nothing is contacted) - shows off the zeroday theme"""
+    cy, mg, gr, am, dim = rgb(0, 255, 208), rgb(255, 48, 128), rgb(60, 255, 120), rgb(255, 178, 36), rgb(90, 120, 130)
+    hosts = [('10.13.37.1', 'gateway', 'ssh/22 https/443'), ('10.13.37.17', 'printer', 'ipp/631'),
+             ('10.13.37.42', 'mainframe', 'ssh/22 telnet/23 db/5432'), ('10.13.37.99', 'coffee', 'htcpcp/418')]
+    out = [cy + '[*]' + R + ' scanning 10.13.37.0/24 ...\r\n']
+    out += ['    %s%-13s%s %-10s %s%s%s\r\n' % (am, ip, R, name, dim, ports, R) for ip, name, ports in hosts]
+    out += [gr + '[+]' + R + ' target acquired: ' + mg + 'mainframe' + R + ' (10.13.37.42)\r\n',
+            cy + '[*]' + R + ' fingerprint: telnetd 0.17 ' + dim + '<- 1999 called' + R + '\r\n',
+            cy + '[*]' + R + ' launching exploit ' + am + 'CVE-1999-1337' + R + '\r\n    ']
+    out += [rgb(int(255 * (1 - i / 39)), int(48 + 207 * i / 39), int(128 + 80 * i / 39)) + '█' for i in range(40)]
+    out += [R + ' 100%\r\n', gr + '[+]' + R + ' shell spawned   ' + gr + 'uid=0(root)' + R + '\r\n',
+            mg + '[!]' + R + ' this is a demo - no computers were harmed\r\n',
+            '\r\n    ' + gr + E + '1m>> ACCESS GRANTED <<' + R + '\r\n']
+    return ''.join(out)
+
+
 def sysinfo():
     lines = [
         ('OS', platform.system() + ' ' + platform.release()),
@@ -117,7 +134,7 @@ def sysinfo():
 
 
 HELP = (rgb(120, 220, 255) + 'pyterm demo shell' + R + ' - commands:\r\n'
-        '  help  colors  boxes  art  braille  logo  info  lorem  clear  flood  error  sleep <s>\r\n'
+        '  help  colors  boxes  art  braille  logo  info  lorem  clear  flood  error  sleep <s>  hack\r\n'
         '  emoji  image  sixel  kitty  animfont  font <spec>  fonts\r\n'
         '  effect <name>   delete <name>   bg <name[,name]>   theme <name>   miner\r\n'
         '  cursor <style> [effect ...|none]   e.g.  cursor hero ripple trail\r\n'
