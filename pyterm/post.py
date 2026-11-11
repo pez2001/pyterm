@@ -21,6 +21,7 @@ class Post:
         self.mult_key = None
         self.prev = None
         self._bloom = None
+        self._lock_cache = None
         self.curve_key = None
         self.t = 0.0
         self.glitch_t = 0.0
@@ -35,6 +36,7 @@ class Post:
         self.mult_key = None
         self.curve_key = None
         self.lock = None
+        self._lock_cache = None
         if lock and lock.get('colors') and not lock.get('off'):
             self._build_lock(lock)
 
@@ -59,13 +61,17 @@ class Post:
     def _interlace(self, vs, amount):
         """two fields per frame: one field shows the previous frame (combing on motion)"""
         self.field = 1 - getattr(self, 'field', 0)
+        cur = pygame.surfarray.pixels2d(vs).T              # rows first; packed pixels, no per-frame allocation
         prev = getattr(self, '_il_prev', None)
-        cur = pygame.surfarray.array3d(vs)
-        if prev is not None and prev.shape == cur.shape and amount >= 0.5:
-            arr = pygame.surfarray.pixels3d(vs)
-            arr[:, self.field::2] = prev[:, self.field::2]
-            del arr
-        self._il_prev = cur
+        if prev is None or prev.shape != cur.shape or prev.dtype != cur.dtype:
+            self._il_prev = cur.copy()
+            self._il_buf = np.empty_like(self._il_prev)
+            return
+        buf = self._il_buf
+        np.copyto(buf, cur)
+        if amount >= 0.5:
+            cur[self.field::2] = prev[self.field::2]
+        self._il_prev, self._il_buf = buf, prev
 
     def _apply_overlay(self, vs):
         """arcade cellophane color bands: [[y0, y1, '#rrggbb'], ...] (fractions of the height)"""
@@ -82,25 +88,52 @@ class Post:
         vs.blit(self._ov, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
 
     def _apply_lock(self, vs):
+        """works on packed pixels: one table lookup per pixel instead of three channel passes"""
         mode, data, dither, bayer = self.lock
         w, h = vs.get_size()
-        arr = pygame.surfarray.pixels3d(vs)
-        if dither:
-            by = np.tile(bayer, (w // 4 + 1, h // 4 + 1))[:w, :h]
-        if mode == 'luma':
-            l = (arr[..., 0].astype(np.float32) * 0.299 + arr[..., 1] * 0.587 + arr[..., 2] * 0.114) / 256.0
-            n = len(data)
-            if dither:
-                l = l + by * dither / n
-            idx = np.clip((l * n).astype(np.int32), 0, n - 1)
-            arr[:] = data[idx]
-        else:
-            if dither:
-                a = np.clip(arr.astype(np.float32) + (by * dither * 48)[..., None], 0, 255).astype(np.int32) >> 3
+        px = pygame.surfarray.pixels2d(vs)
+        rs, gs, bs, _ = vs.get_shifts()
+        key = (w, h, px.dtype, rs, gs, bs, id(data))
+        c = self._lock_cache
+        if c is None or c[0] != key:
+            by = np.tile(bayer, (w // 4 + 1, h // 4 + 1))[:w, :h] if dither else None
+            flat = data.reshape(-1, 3).astype(np.uint32)
+            lut = ((flat[:, 0] << rs) | (flat[:, 1] << gs) | (flat[:, 2] << bs)).astype(px.dtype)
+            if mode == 'luma':
+                d = np.round(by * dither * (1 << 24)).astype(np.int64) if dither else None
             else:
-                a = arr.astype(np.int32) >> 3
-            arr[:] = data[a[..., 0], a[..., 1], a[..., 2]]
-        del arr
+                d = np.floor(by * dither * 48).astype(np.int32) if dither else None
+            c = self._lock_cache = (key, lut, d)
+        _, lut, d = c
+        if mode == 'luma':
+            # luma in 16.16 fixed point; idx = floor(luma * n / 256 + bayer * dither)
+            n = len(lut)
+            it = np.int32 if n <= 64 else np.int64             # 255 * 65536 * n must fit
+            v = ((px >> rs) & 255).astype(it) * 19595
+            v += ((px >> gs) & 255).astype(it) * 38470
+            v += ((px >> bs) & 255).astype(it) * 7471
+            v *= n
+            if d is not None:
+                v += d
+            v >>= 24
+            np.clip(v, 0, n - 1, out=v)
+            px[...] = lut[v]
+        elif d is None:
+            idx = ((px >> (rs + 3)) & 31) << 10
+            idx |= ((px >> (gs + 3)) & 31) << 5
+            idx |= (px >> (bs + 3)) & 31
+            px[...] = lut[idx]
+        else:
+            idx = None
+            for sh, up in ((rs, 10), (gs, 5), (bs, 0)):
+                ch = ((px >> sh) & 255).astype(np.int32)
+                ch += d
+                np.clip(ch, 0, 255, out=ch)
+                ch >>= 3
+                ch <<= up
+                idx = ch if idx is None else idx | ch
+            px[...] = lut[idx]
+        del px
 
     def v(self, k, d=0.0):
         try:
@@ -184,14 +217,21 @@ class Post:
             k = 1 + amount * 0.12 * r2
             sx = ((x * k + 1) / 2 * (w - 1))
             sy = ((y * k + 1) / 2 * (h - 1))
-            self.cmask = (np.abs(x * k) <= 1) & (np.abs(y * k) <= 1)
-            self.cx = np.clip(sx, 0, w - 1).astype(np.int32)
-            self.cy = np.clip(sy, 0, h - 1).astype(np.int32)
-            self.cx, self.cy = np.broadcast_arrays(self.cx, self.cy)
-        src = pygame.surfarray.array3d(vs)
-        out = src[self.cx, self.cy]
-        out[~self.cmask] = 0
-        pygame.surfarray.blit_array(vs, out)
+            mask = (np.abs(x * k) <= 1) & (np.abs(y * k) <= 1)
+            cx = np.clip(sx, 0, w - 1).astype(np.intp)
+            cy = np.clip(sy, 0, h - 1).astype(np.intp)
+            cx, cy = np.broadcast_arrays(cx, cy)
+            # one flat source index per destination pixel, rows first (the surface's memory order)
+            self.cidx = np.ascontiguousarray((cy * w + cx).T).reshape(-1)
+            self.cdead = np.flatnonzero(~np.broadcast_to(mask, (w, h)).T.reshape(-1))
+            self.cbuf = None
+        px = pygame.surfarray.pixels2d(vs).T
+        if self.cbuf is None or self.cbuf.dtype != px.dtype:
+            self.cbuf = np.empty(w * h, px.dtype)
+        np.take(px.reshape(-1), self.cidx, out=self.cbuf)
+        self.cbuf[self.cdead] = 0
+        px[...] = self.cbuf.reshape(h, w)
+        del px
 
     # ------------------------------------------------------------ window res
     def window(self, win, rect, scale, dt):

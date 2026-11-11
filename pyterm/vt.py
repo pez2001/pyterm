@@ -828,10 +828,21 @@ class Screen:
                 self.insert = on
 
     def sgr(self, params):
-        fg, bg, fl = self.attr
         if not params:
             self.attr = DEFAULT_ATTR
             return
+        key = (params, self.attr)
+        a = _SGR_CACHE.get(key)
+        if a is None:
+            self._sgr(params)
+            if len(_SGR_CACHE) > 20000:
+                _SGR_CACHE.clear()
+            _SGR_CACHE[key] = self.attr
+        else:
+            self.attr = a
+
+    def _sgr(self, params):
+        fg, bg, fl = self.attr
         ps = []
         for grp in params.split(';'):
             if ':' in grp:
@@ -938,6 +949,7 @@ class Screen:
 
 
 # ============================================================================
+_SGR_CACHE = {}          # (params, attr before) -> attr after
 _TEXT = re.compile(r'[^\x00-\x1f\x7f-\x9f]+')
 _CSI = re.compile(r'\x1b\[([0-?]*)([ -/]*)([@-~])')
 _CSI_PART = re.compile(r'\x1b\[[0-?]*[ -/]*\Z')

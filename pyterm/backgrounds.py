@@ -91,6 +91,9 @@ class Fire(Background):
         super().resize(w, h)
         self.lw, self.lh = max(4, w // 3), max(4, h // 3)
         self.f = np.zeros((self.lw, self.lh), np.int16)
+        self.rng = np.random.default_rng()
+        self.xbase = np.arange(self.lw, dtype=np.intp)[:, None] + (self.lw - 1)    # + 0..2 and modulo = drift -1..+1
+        self.ybase = np.arange(self.lh - 1, dtype=np.intp)[None, :]
         pal = _gradient_palette([(0, (0, 0, 0)), (0.25, (90, 0, 0)), (0.5, (220, 50, 0)),
                                  (0.75, (255, 180, 20)), (1.0, (255, 255, 220))])
         self.low = _pal_surface(self.lw, self.lh, pal)
@@ -99,15 +102,17 @@ class Fire(Background):
         super().update(dt, energy)
         f = self.f
         lw, lh = self.lw, self.lh
-        f[:, -1] = np.random.randint(160 + int(min(energy, 1.5) * 60), 256, lw)
-        steps = 2
-        for _ in range(steps):
+        rng = self.rng
+        f[:, -1] = rng.integers(160 + int(min(energy, 1.5) * 60), 256, lw)
+        cool = 6 if energy < 0.5 else 4
+        for _ in range(2):
             src = f[:, 1:]
-            r = np.random.randint(0, 3, src.shape)
-            xs = (np.arange(lw)[:, None] + r - 1) % lw
-            shifted = src[xs, np.arange(lh - 1)[None, :]]
-            decay = np.random.randint(0, 6 if energy < 0.5 else 4, src.shape)
-            f[:, :-1] = np.maximum(shifted - decay * 2, 0)
+            rnd = rng.integers(0, 256, (2,) + src.shape, dtype=np.uint8)   # one bulk draw: sideways drift + cooling
+            xs = self.xbase + rnd[0] % 3
+            np.remainder(xs, lw, out=xs)
+            shifted = src[xs, self.ybase]
+            shifted -= (rnd[1] % cool) * np.int16(2)
+            np.maximum(shifted, 0, out=f[:, :-1])
 
     def draw(self, surf, first):
         pygame.surfarray.blit_array(self.low, np.clip(self.f, 0, 255).astype(np.uint8))
