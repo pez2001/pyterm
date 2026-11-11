@@ -4,12 +4,13 @@ palette: ['#000000', '#3bff6b', '#00ff41', '#9dff9d', '#008f11', '#00c040', '#5a
           '#003b00', '#6bff8f', '#4aff7a', '#d0ffd0', '#20b040', '#60ff90', '#90ffb0', '#ffffff']
 fg: '#00ff41'
 bg: '#000000'
-bg_alpha: 170
+bg_alpha: 110
 cursor: '#c0ffc0'
 cursor_effects: [glow, trail]
 font: builtin
 background: [matrix]
-bg_dim: 0.45
+bg_dim: 0.85
+bg_params: {matrix: {color: '#00ff41', density: 1.0, cell: 8, speed: 1.0}}
 letter_effect: decrypt
 delete_effect: dust
 text_shadow: true

@@ -324,37 +324,101 @@ class Grid(Background):
                 pygame.draw.line(surf, col, (0, y), (w, y))
 
 
+def _rain_glyphs(n=48, seed=7):
+    """n made-up 8x8 glyphs built from a few strokes each - they read like the mirrored katakana of the film"""
+    rng = random.Random(seed)
+    out = np.zeros((n, 8, 8), bool)
+    for g in out:
+        for _ in range(rng.randint(2, 4)):
+            k = rng.random()
+            if k < 0.4:                                   # horizontal bar
+                y, x0 = rng.choice((1, 3, 4, 6)), rng.randint(1, 3)
+                g[x0:rng.randint(x0 + 3, 7), y] = True
+            elif k < 0.8:                                 # vertical bar
+                x, y0 = rng.choice((1, 3, 4, 6)), rng.randint(1, 3)
+                g[x, y0:rng.randint(y0 + 3, 7)] = True
+            else:                                         # diagonal
+                x, y, d = rng.randint(1, 3), rng.randint(1, 3), rng.choice((1, -1))
+                for i in range(4):
+                    g[min(6, x + i), min(6, max(1, y + (i if d > 0 else 3 - i)))] = True
+    return out
+
+
 class Matrix(Background):
+    """digital rain: glyphs stay where they are and light up as a drop passes - a white head, a green
+    tail that fades out, and glyphs that keep changing while they glow.
+
+    bg_params: {matrix: {color: '#00ff41', density: 1.0, cell: 8, speed: 1.0}}"""
     name = 'matrix'
 
     def resize(self, w, h):
         super().resize(w, h)
-        self.cell = 8
-        self.ncol = w // self.cell + 1
-        self.heads = np.random.uniform(-h, h, self.ncol)
-        self.speed = np.random.uniform(40, 160, self.ncol)
-        self.layer = pygame.Surface((w, h))
-        self.layer.fill((0, 0, 0))
-        self.font = pygame.font.Font(None, 12)
-        pool = '0123456789ABCDEFZ$#*+<>=:|'
-        self.glyphs = [self.font.render(c, False, (40 + 30 * k, 255 - 40 * k, 90)) for c in pool for k in range(3)]
-        self.white = [self.font.render(c, False, (230, 255, 230)) for c in pool]
+        self.cell = c = 8 * max(1, int(self.p('cell', 8) or 8) // 8)
+        self.k = c // 8
+        self.cols, self.rows = w // c + 1, h // c + 1
+        self.glyphs = _rain_glyphs()
+        self.rng = np.random.default_rng()
+        self.grid = self.rng.integers(0, len(self.glyphs), (self.cols, self.rows))
+        self.heat = np.zeros((self.cols, self.rows), np.float32)
+        n = max(1, int(self.cols * 2.2 * float(self.p('density', 1.0) or 0)))
+        self.dcol = self.rng.integers(0, self.cols, n)
+        self.dy = self.rng.uniform(-self.rows, self.rows, n).astype(np.float32)
+        self.dv = self.rng.uniform(6, 22, n).astype(np.float32)
+        self.fade = self.rng.uniform(0.22, 0.7, self.cols).astype(np.float32)     # tail length differs per column
+        col = self.p('color', None)
+        try:
+            from .themes import hex2rgb
+            col = tuple(hex2rgb(col)) if isinstance(col, str) else tuple(int(v) for v in col[:3])
+        except Exception:
+            col = (0, 255, 65)
+        pal = []
+        for i in range(256):                              # 0 black .. 200 full color .. 255 white head
+            if i <= 200:
+                f = (i / 200) ** 1.15
+                pal.append(tuple(int(v * f) for v in col))
+            else:
+                f = (i - 200) / 55
+                pal.append(tuple(int(v + (255 - v) * f) for v in col))
+        self.low = _pal_surface(self.cols * 8, self.rows * 8, pal)
 
     def update(self, dt, energy):
         super().update(dt, energy)
-        self.heads += self.speed * dt * (1 + energy)
-        m = self.heads > self.h + 50
-        self.heads[m] = np.random.uniform(-200, 0, int(m.sum()))
-        self.layer.fill((228, 238, 228), special_flags=pygame.BLEND_RGB_MULT)
-        for i in range(self.ncol):
-            if random.random() < 0.6:
-                y = int(self.heads[i] // self.cell * self.cell)
-                if 0 <= y < self.h:
-                    self.layer.blit(random.choice(self.glyphs), (i * self.cell, y))
-                    self.layer.blit(random.choice(self.white), (i * self.cell, y + self.cell))
+        dt = min(dt, 0.1)
+        rng, heat = self.rng, self.heat
+        sp = (0.55 + min(2.0, energy) * 0.9) * float(self.p('speed', 1.0) or 1.0)
+        heat -= dt * self.fade[:, None] * (0.8 + sp * 0.6)
+        np.maximum(heat, 0, out=heat)
+        old = self.dy.astype(np.int32)
+        self.dy += self.dv * dt * sp
+        new = self.dy.astype(np.int32)
+        for step in range(int((new - old).max()) + 1 if len(new) else 0):   # light every row a drop crossed
+            y = old + 1 + step
+            m = (y <= new) & (y >= 0) & (y < self.rows)
+            heat[self.dcol[m], y[m]] = 1.0
+        done = new > self.rows + 2
+        k = int(done.sum())
+        if k:
+            self.dy[done] = rng.uniform(-self.rows * 0.6, 0, k)
+            self.dcol[done] = rng.integers(0, self.cols, k)
+            self.dv[done] = rng.uniform(6, 22, k)
+        flip = rng.random(heat.shape) < dt * 1.2                             # glowing glyphs keep changing
+        flip &= heat > 0.05
+        k = int(flip.sum())
+        if k:
+            self.grid[flip] = rng.integers(0, len(self.glyphs), k)
+        self.head = (self.dcol, np.clip(new, 0, self.rows - 1), (new >= 0) & (new < self.rows))
 
     def draw(self, surf, first):
-        surf.blit(self.layer, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
+        lvl = (self.heat * 200).astype(np.uint8)
+        hc, hy, ok = getattr(self, 'head', (None, None, None))
+        if hc is not None:
+            lvl[hc[ok], hy[ok]] = 255
+        # cells -> pixels: every cell shows its glyph in its brightness
+        img = self.glyphs[self.grid] * lvl[:, :, None, None]                 # (cols, rows, 8, 8)
+        img = img.transpose(0, 2, 1, 3).reshape(self.cols * 8, self.rows * 8)
+        pygame.surfarray.blit_array(self.low, img)
+        src = self.low if self.k == 1 else pygame.transform.scale(self.low, (self.cols * self.cell, self.rows * self.cell))
+        surf.blit(src, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
 class Metaballs(Background):

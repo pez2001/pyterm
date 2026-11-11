@@ -486,10 +486,25 @@ def derived_builtin(kind):
     """Retro variants generated from the built-in 5x9 font:
     fat8   - 8x8 cell, double-width strokes (C64 / NES / Game Boy look)
     topaz  - 8x10 cell, double-width strokes + descenders (Amiga Topaz look)
-    thin8  - 8x8 cell, single strokes (Atari / MSX look)"""
+    thin8  - 8x8 cell, single strokes (Atari / MSX look)
+    vga    - 8x16 cell, tall double-stroke letters (DOS text mode look)"""
     base = BuiltinFont()
     if kind == 'c64narrow':
         return _narrow8(base)
+    if kind == 'vga':
+        bits = {}
+        rows = [min(8, i * 9 // 13) for i in range(13)]          # the 9 rows of the builtin stretched to 13
+        for c, data in base.data.items():
+            a = np.array(data, bool).T[:, rows]                   # (5, 13)
+            g = np.zeros((8, 16), bool)
+            g[1:6, 1:14] = a
+            g[2:7, 1:14] |= a
+            bits[c] = g
+        q = np.zeros((8, 16), bool)                               # keep the two ticks of the quote apart
+        q[1:3, 1:5] = True
+        q[4:6, 1:5] = True
+        bits['"'] = q
+        return PixelFont(kind, 8, 16, bits)
     bold = kind in ('fat8', 'topaz')
     cw, ch = (8, 10) if kind == 'topaz' else (8, 8)
     bits = {}
@@ -1036,7 +1051,7 @@ class RomanFont(Font):
 
 
 def list_fonts():
-    out = ['builtin', 'builtin:fat8', 'builtin:topaz', 'builtin:thin8', 'builtin:c64narrow',
+    out = ['builtin', 'builtin:fat8', 'builtin:topaz', 'builtin:thin8', 'builtin:vga', 'builtin:c64narrow',
            'builtin:wave', 'builtin:shimmer', 'builtin:jelly', 'builtin:bounce',
            'builtin:amiga', 'builtin:amigachrome', 'builtin:amigafire', 'builtin:cute',
            'builtin:scroller', 'builtin:scrollergold', 'builtin:scrollerice', 'builtin:roman']

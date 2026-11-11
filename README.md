@@ -176,7 +176,7 @@ dressed up like a 1992 demoscene production:
   — and **c64_raw** is the plain version: same screen and exact colors, but no CRT, glow, effects, stripes or sound,
   with a quiet text-only boot (`splash: c64_clean`)
 * retro console themes: **c64**, **amiga**, **nes_famicom**, **gameboy** with matching generated pixel fonts
-  (`builtin:fat8`, `builtin:topaz`, `builtin:thin8`), **palette lock** (everything quantized to the console palette,
+  (`builtin:fat8`, `builtin:topaz`, `builtin:thin8`, `builtin:vga` for the tall DOS text mode), **palette lock** (everything quantized to the console palette,
   optional ordered dithering) and a dot-matrix **LCD** filter
 
 ## Screenshots
