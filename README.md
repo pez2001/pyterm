@@ -121,7 +121,7 @@ dressed up like a 1992 demoscene production:
     (targeting brackets that kick on every key, scan line on Enter), boot splash `uplink` (boot log, key
     cracked digit by digit, ACCESS GRANTED), sound pack `cyber`
 * **interlace** emulation (`crt: {interlace: 0.8}`): alternating fields + motion combing, theme `interlace`
-* backgrounds: plasma, fire, tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
+* backgrounds: plasma, fire (the chunky oldschool one: `bg_params: {fire: {chunk: 6, palette: classic|red|blue|green|purple, height: 1.0}}`, `style: doom` for the fine speckled fire), tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
   shadebobs, rotozoomer, twister, Amiga boing ball, vectorballs, parallax, platformer, invaders, weather, dollhouse, railway, settlers, discocity, neonsigns, watermirror, aquarium, spacestation, garden, pinball, c64load, beach, fireworks, christmas, halloween, easter,
   autumn, sakura, winter, seasonal, stone, zeroday (all stackable)
 * CRT stack: scanlines, vignette, bloom, phosphor afterglow, chromatic aberration, barrel curvature, flicker, noise, glitch

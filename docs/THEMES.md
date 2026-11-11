@@ -40,6 +40,8 @@ background: [plasma]                   # stack: plasma fire tunnel starfield cop
                                        #        fireworks christmas halloween easter autumn sakura winter seasonal stone zeroday (+plugins)
 bg_dim: 0.4                            # background brightness
 bg_params: {tunnel: {color: [255, 80, 220]}, starfield: {count: 600},
+            fire: {chunk: 6, palette: classic, height: 1.0, style: classic},   # palette: classic|red|blue|green|purple or
+                                       # ['#000000', ..., '#ffffff'] cold -> hot; style: classic (chunky oldschool) | doom (fine)
             weather: {location: auto, refresh_min: 10, simulate: null},  # location: auto | "Berlin" | [lat, lon]
             watermirror: {level: 0.62, tint: '#5a8cd2', waves: 1.0, speed: 1.0, text: true, sky: auto},
             c64load: {stripes: calm}, seasonal: {force: null},    # stripes: calm|authentic|off, force: halloween ...

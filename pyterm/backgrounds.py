@@ -83,26 +83,89 @@ class Plasma(Background):
         surf.blit(big, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
+FIRE_PALETTES = {
+    # heat 0..1 -> color; the classic one glows violet-blue at its coldest edge like the old VGA fires
+    'classic': [(0, (0, 0, 0)), (0.10, (24, 0, 48)), (0.22, (96, 0, 56)), (0.38, (208, 16, 0)), (0.58, (255, 128, 0)),
+                (0.78, (255, 232, 48)), (1.0, (255, 255, 255))],
+    'red': [(0, (0, 0, 0)), (0.25, (90, 0, 0)), (0.5, (220, 50, 0)), (0.75, (255, 180, 20)), (1.0, (255, 255, 220))],
+    'blue': [(0, (0, 0, 0)), (0.12, (0, 0, 64)), (0.35, (0, 48, 200)), (0.6, (0, 168, 255)), (0.82, (160, 240, 255)),
+             (1.0, (255, 255, 255))],
+    'green': [(0, (0, 0, 0)), (0.12, (0, 32, 24)), (0.35, (0, 136, 24)), (0.6, (96, 232, 0)), (0.82, (224, 255, 96)),
+              (1.0, (255, 255, 255))],
+    'purple': [(0, (0, 0, 0)), (0.12, (24, 0, 56)), (0.35, (120, 0, 184)), (0.6, (232, 48, 216)), (0.82, (255, 176, 232)),
+               (1.0, (255, 255, 255))],
+}
+
+
 class Fire(Background):
+    """the oldschool fire: a coarse heat buffer, random hot spots along the bottom, every cell the
+    average of the cells below it, drawn through a 256-color palette as big chunky pixels.
+
+    bg_params: {fire: {chunk: 6, palette: classic, height: 1.0, style: classic}}
+      chunk    size of one fire pixel in virtual pixels (bigger = chunkier)
+      palette  classic | red | blue | green | purple, or your own list of '#rrggbb' from cold to hot
+      height   flame height (1.0 = about half the screen, more with output)
+      style    classic | doom (the finer, speckled fire pyterm had before)"""
     name = 'fire'
     opaque = True
 
     def resize(self, w, h):
         super().resize(w, h)
-        self.lw, self.lh = max(4, w // 3), max(4, h // 3)
-        self.f = np.zeros((self.lw, self.lh), np.int16)
+        self.doom = str(self.p('style', 'classic')) == 'doom'
+        chunk = max(1, int(self.p('chunk', 3 if self.doom else 6) or 1))
+        self.lw, self.lh = max(4, -(-w // chunk)), max(4, -(-h // chunk))
+        self.big = (self.lw * chunk, self.lh * chunk)
         self.rng = np.random.default_rng()
-        self.xbase = np.arange(self.lw, dtype=np.intp)[:, None] + (self.lw - 1)    # + 0..2 and modulo = drift -1..+1
-        self.ybase = np.arange(self.lh - 1, dtype=np.intp)[None, :]
-        pal = _gradient_palette([(0, (0, 0, 0)), (0.25, (90, 0, 0)), (0.5, (220, 50, 0)),
-                                 (0.75, (255, 180, 20)), (1.0, (255, 255, 220))])
-        self.low = _pal_surface(self.lw, self.lh, pal)
+        self.acc = 0.0
+        pal = self.p('palette', 'red' if self.doom else 'classic')
+        if isinstance(pal, (list, tuple)) and len(pal) >= 2:
+            try:
+                from .themes import hex2rgb
+                stops = [(i / (len(pal) - 1), tuple(hex2rgb(c))) for i, c in enumerate(pal)]
+            except Exception:
+                stops = FIRE_PALETTES['classic']
+        else:
+            stops = FIRE_PALETTES.get(str(pal), FIRE_PALETTES['classic'])
+        self.low = _pal_surface(self.lw, self.lh, _gradient_palette(stops))
+        if self.doom:
+            self.f = np.zeros((self.lw, self.lh), np.int16)
+            self.xbase = np.arange(self.lw, dtype=np.intp)[:, None] + (self.lw - 1)   # + 0..2 and modulo = drift -1..+1
+            self.ybase = np.arange(self.lh - 1, dtype=np.intp)[None, :]
+        else:
+            self.f = np.zeros((self.lw, self.lh + 2), np.float32)     # two hidden seed rows below the picture
+            self.seed = np.zeros(-(-self.lw // 3), np.float32)
 
     def update(self, dt, energy):
         super().update(dt, energy)
-        f = self.f
-        lw = self.lw
-        rng = self.rng
+        if self.doom:
+            return self._update_doom(energy)
+        f, lw, lh, rng = self.f, self.lw, self.lh, self.rng
+        e = min(energy, 1.5)
+        # the classic runs at a fixed 30 steps per second, whatever the background frame rate is
+        self.acc = min(3.0, self.acc + dt * 30)
+        # every cell keeps this share of the heat below it: decides how high the flames get
+        keep = 1 - 2.2 / (lh * (0.5 + 0.22 * e) * float(self.p('height', 1.0)) + 4)
+        while self.acc >= 1:
+            self.acc -= 1
+            # hot spots: some of the bottom cells flip between cold and white-hot, the rest keep burning
+            # (spots are a few cells wide, so the flames rise as tongues instead of an even glow)
+            n = len(self.seed)
+            flip = rng.random(n) < 0.35
+            self.seed[flip] = np.where(rng.random(int(flip.sum())) < 0.5 + 0.2 * e, 255.0, 0.0)
+            row = np.repeat(self.seed, 3)[:lw]
+            f[:, lh] = row
+            f[:, lh + 1] = row
+            below = f[:, 1:lh + 1]
+            s = np.roll(below, 1, 0)
+            s += below
+            s += np.roll(below, -1, 0)
+            s += f[:, 2:lh + 2]
+            s *= keep / 4
+            s -= 0.35                                               # so the smoke really ends in black
+            np.maximum(s, 0, out=f[:, :lh])
+
+    def _update_doom(self, energy):
+        f, lw, rng = self.f, self.lw, self.rng
         f[:, -1] = rng.integers(160 + int(min(energy, 1.5) * 60), 256, lw)
         cool = 6 if energy < 0.5 else 4
         for _ in range(2):
@@ -115,9 +178,10 @@ class Fire(Background):
             np.maximum(shifted, 0, out=f[:, :-1])
 
     def draw(self, surf, first):
-        pygame.surfarray.blit_array(self.low, np.clip(self.f, 0, 255).astype(np.uint8))
-        big = pygame.transform.scale(self.low, (self.w, self.h))
-        surf.blit(big, (0, 0), special_flags=0 if first else pygame.BLEND_RGB_ADD)
+        heat = self.f if self.doom else self.f[:, :self.lh]
+        pygame.surfarray.blit_array(self.low, np.clip(heat, 0, 255).astype(np.uint8))
+        big = pygame.transform.scale(self.low, self.big)
+        surf.blit(big, (0, self.h - self.big[1]), special_flags=0 if first else pygame.BLEND_RGB_ADD)
 
 
 class Tunnel(Background):
