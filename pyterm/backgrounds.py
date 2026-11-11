@@ -101,7 +101,7 @@ class Fire(Background):
     def update(self, dt, energy):
         super().update(dt, energy)
         f = self.f
-        lw, lh = self.lw, self.lh
+        lw = self.lw
         rng = self.rng
         f[:, -1] = rng.integers(160 + int(min(energy, 1.5) * 60), 256, lw)
         cool = 6 if energy < 0.5 else 4
