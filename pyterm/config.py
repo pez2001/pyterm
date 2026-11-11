@@ -124,7 +124,7 @@ def parse_args(argv=None):
     ap.add_argument('--effect', dest='letter_effect', help='letter effect | random (per letter) | pick | random:a,b')
     ap.add_argument('--delete-effect', help='delete effect | random (per letter) | pick | random:a,b')
     ap.add_argument('--cursor', dest='cursor_style', help='cursor style: block underline beam outline miner hero settler train ... | random')
-    ap.add_argument('--cursor-fx', dest='cursor_effects', help='comma separated cursor effects: glow,trail,ripple,sparkle,orbit,smoke | random | random2')
+    ap.add_argument('--cursor-fx', dest='cursor_effects', help='comma separated cursor effects: glow,trail,ripple,sparkle,orbit,smoke,reticle | random | random2')
     ap.add_argument('--bg', dest='background', help='comma separated background layers | random | random2 | random:a,b')
     ap.add_argument('--writer', choices=['instant', 'smart', 'baud', 'human'])
     ap.add_argument('--baud', type=int)

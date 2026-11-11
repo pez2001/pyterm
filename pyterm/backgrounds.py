@@ -938,3 +938,8 @@ BACKGROUNDS.update(SEASONS2)
 from .roman import Stone  # noqa: E402
 
 BACKGROUNDS['stone'] = Stone
+
+# zeroday: holographic globe / threat map hacker deck
+from .cyber import SCENES as CYBER  # noqa: E402
+
+BACKGROUNDS.update(CYBER)

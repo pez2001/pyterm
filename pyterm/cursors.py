@@ -7,7 +7,7 @@ Two plug-in points, both selected per theme:
     cursor_params: {trail: {count: 10}, ripple: {color: '#ff40c0'}}
 
 Built-in styles   block underline beam outline   miner hero settler train
-Built-in effects  glow trail ripple sparkle orbit smoke
+Built-in effects  glow trail ripple sparkle orbit smoke reticle
 
 Write your own (in a plugin, see plugins/cursor_demo.py):
 
@@ -401,6 +401,58 @@ class Smoke(CursorEffect):
                                 life=np.random.uniform(0.4, 0.9, n).astype(np.float32), col=(200, 200, 205), pal=P.FADE)
 
 
+class Reticle(CursorEffect):
+    """targeting brackets lock onto the cursor: they breathe, kick outwards on every key
+    and fire a scan line along the row on Enter"""
+    name = 'reticle'
+    defaults = {'size': 1.0}
+
+    def start(self):
+        self.kick = 0.0
+        self.sweep = 0.0
+        self.sweep_at = (0, 0)
+
+    def update(self, dt, st):
+        if st.typed:
+            self.kick = 1.0
+        if st.newline and st.focused:
+            self.sweep = 1.0
+            self.sweep_at = (st.x + st.cw // 2, st.y + st.ch)
+        self.kick = max(0.0, self.kick - dt * 5)
+        self.sweep = max(0.0, self.sweep - dt * 2.5)
+
+    def draw(self, surf, ox, oy, st):
+        if not st.focused:
+            return
+        rgb = self.color('color', st)
+        if self.sweep > 0:
+            k = 1 - self.sweep
+            half = int(k * st.cw * 44)
+            c = tuple(int(v * self.sweep) for v in rgb)
+            x, y = ox + self.sweep_at[0], oy + self.sweep_at[1]
+            surf.fill(c, (x - half, y, half * 2, 1), special_flags=pygame.BLEND_RGB_ADD)
+        if st.eco:
+            return
+        s = float(self.p('size', 1.0))
+        d = int(round((2 + math.sin(st.t * 3.0) + self.kick * 4) * s))
+        L = max(2, int(st.cw * 0.4 * s))
+        x0, y0 = ox + st.x - d, oy + st.y - d
+        x1, y1 = ox + st.x + st.cw + d - 1, oy + st.y + st.ch + d - 1
+        hot = (255, 255, 255) if self.kick > 0.6 else rgb
+        for x, y, dx, dy in ((x0, y0, 1, 1), (x1, y0, -1, 1), (x0, y1, 1, -1), (x1, y1, -1, -1)):
+            surf.fill(hot, (x if dx > 0 else x - L + 1, y, L, 1))
+            surf.fill(hot, (x, y if dy > 0 else y - L + 1, 1, L))
+        dim = tuple(v // 2 for v in rgb)
+        mx, my = (x0 + x1) // 2, (y0 + y1) // 2
+        surf.fill(dim, (x0 - 3, my, 2, 1))
+        surf.fill(dim, (x1 + 2, my, 2, 1))
+        surf.fill(dim, (mx, y0 - 3, 1, 2))
+        surf.fill(dim, (mx, y1 + 2, 1, 2))
+
+    def busy(self):
+        return self.kick > 0 or self.sweep > 0
+
+
 class ChiselCursor(CursorStyle):
     """a tiny chisel and mallet drawn entirely inside the cursor cell (like the block cursor);
     the mallet taps the chisel whenever you type"""
@@ -447,7 +499,7 @@ class ChiselCursor(CursorStyle):
 
 
 CURSORS = {c.name: c for c in (Block, Underline, Beam, Outline, Miner, Hero, Settler, Train, ChiselCursor)}
-CURSOR_EFFECTS = {c.name: c for c in (Glow, Trail, Ripple, Sparkle, Orbit, Smoke)}
+CURSOR_EFFECTS = {c.name: c for c in (Glow, Trail, Ripple, Sparkle, Orbit, Smoke, Reticle)}
 
 
 def make_style(name, pane, params=None):

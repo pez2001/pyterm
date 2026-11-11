@@ -19,7 +19,7 @@ dressed up like a 1992 demoscene production:
   flies into the counter. Heavy output makes him swing faster and reach wider; at the top end: **TNT**
 * **cursor styles + cursor effects** as plug-in classes (docs/CURSORS.md): pick one style
   (`block underline beam outline miner hero settler train`, or your own) and stack any effects on it
-  (`glow trail ripple sparkle orbit smoke`, or your own) — `cursor_effects: [glow, trail]`, Ctrl+Shift+U cycles
+  (`glow trail ripple sparkle orbit smoke reticle`, or your own) — `cursor_effects: [glow, trail]`, Ctrl+Shift+U cycles
   styles, Ctrl+Shift+Alt+U effect sets, `--cursor hero --cursor-fx ripple,trail`, demo shell: `cursor ghost comet`
 * **cute cursors**: `cursor_style: miner` (walks, mines, blinks, looks around, hops on Enter, `!` on bell,
   `?` on failed commands, `♥` on success, falls asleep with z z z), `hero` (the jump'n'run kid), `train`
@@ -106,12 +106,26 @@ dressed up like a 1992 demoscene production:
   * **sakura** — Mt. Fuji, pagoda, cherry trees letting petals drift onto a koi pond
   * **winter** — northern lights rippling over snowy peaks and a frozen lake, cabin, gentle snow
   * new delete effects `firework`, `leaves`, `snow`, `petals`
+* **zeroday** — the hacker's deck, the biggest theme so far (`-t zeroday`, try `hack` and `error` in `--demo`):
+  * a **holographic dot-matrix globe** (real coastlines, 32 cities) turns in falling hex rain; every key you
+    type flies off as a **packet** to your home node and is routed on along a great-circle arc to the city you
+    are attacking; program output drives the rain, the ambient traffic and the throughput scope
+  * a command that **succeeds roots the node** — *ACCESS GRANTED*, a green diamond stays on the map; a command
+    that **fails trips the ICE**: red counter-traces race back to your home node, the picture tears, the
+    **TRACE meter** climbs — at 100 % the connection is *burned* and all rooted nodes are lost
+  * Enter sweeps a scan ring over the globe, the bell pings like a sonar, ←/→ spin the globe
+  * HUD: UTC clock, node id, hex tap of the keys you type, throughput scope, typing speed, packets, rooted
+    nodes, trace meter, uptime — all colors, the home node, rain, HUD and globe are `bg_params: {zeroday: {...}}`
+  * new building blocks, usable in any theme: letter effect `breach` (bits → hex under a targeting bracket →
+    RGB-split lock-in), delete effect `derez` (scan lines torn apart in cyan/magenta), cursor effect `reticle`
+    (targeting brackets that kick on every key, scan line on Enter), boot splash `uplink` (boot log, key
+    cracked digit by digit, ACCESS GRANTED), sound pack `cyber`
 * **interlace** emulation (`crt: {interlace: 0.8}`): alternating fields + motion combing, theme `interlace`
 * backgrounds: plasma, fire, tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
   shadebobs, rotozoomer, twister, Amiga boing ball, vectorballs, parallax, platformer, invaders, weather, dollhouse, railway, settlers, discocity, neonsigns, watermirror, aquarium, spacestation, garden, pinball, c64load, beach, fireworks, christmas, halloween, easter,
-  autumn, sakura, winter, seasonal, stone (all stackable)
+  autumn, sakura, winter, seasonal, stone, zeroday (all stackable)
 * CRT stack: scanlines, vignette, bloom, phosphor afterglow, chromatic aberration, barrel curvature, flicker, noise, glitch
-* procedural sound packs (chime, typewriter, 8bit, glass): every key chimes, deletes blip, BEL rings
+* procedural sound packs (chime, typewriter, 8bit, glass, cyber): every key chimes, deletes blip, BEL rings
 * letter-writer output pacing: smart roll-out, authentic **baud rates** (300…115200), human typewriter
 * boot intro with a particle logo, copper bars and a sine scroller
 * the world reacts to your workload: backgrounds speed up and glow with output throughput, and errors make the screen shake
@@ -149,7 +163,7 @@ dressed up like a 1992 demoscene production:
   `python -m pyterm --demo -t c64 --record c64.gif --frames 300`
 * **smooth scrolling** (pixel-smooth output scroll + scrollback), **GPU presenter** (SDL2 renderer, vsync, GPU
   upscaling), **eco mode** (zero CPU when nothing moves), reduced fps when idle/unfocused, cached background rate
-* **boot splashes** are pluggable classes (`splash: demo | c64 | c64_clean | none`, `--splash NAME|random`, demo shell `splash c64`):
+* **boot splashes** are pluggable classes (`splash: demo | c64 | c64_clean | uplink | none`, `--splash NAME|random`, demo shell `splash c64`):
   the **c64** theme powers up like the breadbin — READY., `LOAD"$",8,1`, `LIST` with the disk directory,
   `LOAD"PYTERM",8,1` with loading stripes and a picture building up, `RUN` — and then uses only the real
   **320×200 text area inside the big C64 border**, in **80-column mode** with a 4×8 font like the C64's 80-column
@@ -169,6 +183,7 @@ dressed up like a 1992 demoscene production:
 | ![c64](docs/media/c64.png)<br>**c64** | ![amiga](docs/media/amiga.png)<br>**amiga** |
 | ![vaporwave](docs/media/vaporwave.png)<br>**vaporwave** | ![inferno](docs/media/inferno.png)<br>**inferno** |
 | ![gameboy](docs/media/gameboy.png)<br>**gameboy** | ![weather](docs/media/weather.png)<br>**weather** |
+| ![zeroday](docs/media/zeroday.png)<br>**zeroday** | |
 
 Regenerate them with `python tools/screenshots.py docs/media` and the video with `python tools/showcase.py docs/media/showcase.mp4`.
 

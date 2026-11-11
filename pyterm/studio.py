@@ -562,7 +562,7 @@ class Studio:
 
         ui.header('SOUND')
         snd = th.setdefault('sound', {})
-        v = ui.cycle('pack', snd.get('pack', 'chime'), ['chime', 'typewriter', '8bit', 'glass', 'off'])
+        v = ui.cycle('pack', snd.get('pack', 'chime'), ['chime', 'typewriter', '8bit', 'glass', 'cyber', 'off'])
         if v != snd.get('pack'):
             snd['pack'] = v
             app.sound.enabled = v != 'off'

@@ -117,6 +117,12 @@ class Sound:
                         for p in PENTA]
             S['delete'] = [self._mk(_sweep(2400, 1200, 0.2, 14), 0.25)]
             S['newline'] = [self._mk(_sine(base, 0.8, 4, ((1, 1), (1.5, 0.5), (2, 0.4))), 0.35)]
+        elif pack == 'cyber':   # dry digital ticks, a two-tone confirm on Enter
+            S['key'] = [self._mk(mix(_sine(base * 4 * 2 ** (p / 12), 0.05, 60, ((1, 1), (2, 0.35))),
+                                     _noise(0.012, 200, 0.2) * 0.4), 0.3) for p in PENTA]
+            S['delete'] = [self._mk(_sweep(1800, 500, 0.06, 30, True), 0.22)]
+            S['newline'] = [self._mk(np.concatenate([_square(base * 1.5, 0.04, 25, 0.25), _square(base * 2, 0.05, 25, 0.25),
+                                                     _sine(base * 3, 0.14, 14)]), 0.3)]
         else:  # chime
             S['key'] = [self._mk(_sine(base * 2 ** (p / 12), 0.35, 9, ((1, 1), (2, 0.3), (3, 0.08))), 0.35)
                         for p in PENTA]

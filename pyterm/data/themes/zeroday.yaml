@@ -1,0 +1,37 @@
+# pyterm theme - every key is optional, see docs/THEMES.md
+name: zeroday
+description: "the hacker's deck - a holographic globe turns in the hex rain; every key you type is a packet routed around the world, a command that works roots a node (ACCESS GRANTED), one that fails trips the ICE: counter-traces, torn picture, TRACE meter - at 100% the connection is burned. Enter scans the globe, left/right spin it"
+palette: ['#05070d', '#ff2e62', '#39ff88', '#ffb224', '#3d8bff', '#b46bff', '#22e6ff', '#c9d6e2',
+          '#3a4a5c', '#ff6b8f', '#8dffba', '#ffd27a', '#7ab4ff', '#d3a4ff', '#8af3ff', '#ffffff']
+fg: '#b8ffe9'
+bg: '#03050a'
+bg_alpha: 70
+cell_bg_alpha: 190
+cursor: '#39ff88'
+cursor_style: block
+cursor_effects: [reticle, glow, trail]
+cursor_params: {reticle: {color: '#ff2e88'}, trail: {count: 5, color: '#22e6ff'}}
+text_shadow: true
+font: builtin
+border: 16
+background: [zeroday]
+bg_dim: 0.8
+bg_params:
+  zeroday:
+    accent: '#00ffd0'          # hologram, rain, HUD
+    accent2: '#ff2e88'         # targets, traffic, key tap
+    alert: '#ff2846'           # ICE / trace
+    ok: '#3cff78'              # rooted nodes
+    home: [64.1, -21.9]        # your home node [lat, lon]
+    rain: 1.0                  # hex rain density (0 = off)
+    spin: 1.0                  # globe speed
+    hud: true
+    globe: true
+    callsign: 'ZERODAY//OS'
+letter_effect: breach
+delete_effect: derez
+alt_effects: typed
+splash: uplink
+crt: {scanlines: 0.22, vignette: 0.55, bloom: 0.6, noise: 0.05, glitch: 0.04, aberration: 1}
+sound: {pack: cyber, volume: 0.3}
+banner: "\n  \e[38;2;0;255;208m▞▚ ZERODAY//OS\e[0m  uplink secure \e[38;2;60;255;120m●\e[0m  3 hops  \e[38;2;90;120;130mstay out of the logs\e[0m\n\n"
