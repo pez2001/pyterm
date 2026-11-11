@@ -20,6 +20,7 @@ class Post:
         self.mult = None
         self.mult_key = None
         self.prev = None
+        self._bloom = None
         self.curve_key = None
         self.t = 0.0
         self.glitch_t = 0.0
@@ -123,21 +124,27 @@ class Post:
         bl = self.v('bloom')
         if bl > 0:
             sw, sh = max(1, w // 4), max(1, h // 4)
-            small = pygame.transform.smoothscale(vs, (sw, sh))
-            small = pygame.transform.smoothscale(small, (max(1, sw // 2), max(1, sh // 2)))
-            small = pygame.transform.smoothscale(small, (sw, sh))
+            b = self._bloom
+            if b is None or b[0] != (w, h) or b[1].get_bitsize() != vs.get_bitsize():   # scratch surfaces, kept between frames
+                b = self._bloom = ((w, h), pygame.Surface((sw, sh), 0, vs),
+                                   pygame.Surface((max(1, sw // 2), max(1, sh // 2)), 0, vs), pygame.Surface((w, h), 0, vs))
+            _, quarter, eighth, full = b
+            pygame.transform.smoothscale(vs, (sw, sh), quarter)
+            pygame.transform.smoothscale(quarter, eighth.get_size(), eighth)
+            pygame.transform.smoothscale(eighth, (sw, sh), quarter)
             k = int(255 * min(1.0, bl))
-            small.fill((k, k, k), special_flags=pygame.BLEND_RGB_MULT)
-            vs.blit(pygame.transform.smoothscale(small, (w, h)), (0, 0), special_flags=pygame.BLEND_RGB_ADD)
+            quarter.fill((k, k, k), special_flags=pygame.BLEND_RGB_MULT)
+            pygame.transform.smoothscale(quarter, (w, h), full)
+            vs.blit(full, (0, 0), special_flags=pygame.BLEND_RGB_ADD)
         ab = int(self.v('aberration'))
-        if ab > 0:
-            red = vs.copy()
-            red.fill((255, 0, 0), special_flags=pygame.BLEND_RGB_MULT)
-            blue = vs.copy()
-            blue.fill((0, 0, 255), special_flags=pygame.BLEND_RGB_MULT)
-            vs.fill((0, 255, 0), special_flags=pygame.BLEND_RGB_MULT)
-            vs.blit(red, (-ab, 0), special_flags=pygame.BLEND_RGB_ADD)
-            vs.blit(blue, (ab, 0), special_flags=pygame.BLEND_RGB_ADD)
+        if 0 < ab < w:
+            # red shifts left, blue right - moved in place, channel by channel (no full-screen copies)
+            px = pygame.surfarray.pixels3d(vs)
+            px[:-ab, :, 0] = px[ab:, :, 0]
+            px[-ab:, :, 0] = 0
+            px[ab:, :, 2] = px[:-ab, :, 2]
+            px[:ab, :, 2] = 0
+            del px
         gl = self.v('glitch')
         if gl > 0:
             if self.glitch_t > 0:
