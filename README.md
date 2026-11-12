@@ -137,7 +137,7 @@ dressed up like a 1992 demoscene production:
 …and it stays useful for daily work:
 
 * real PTY (Linux `pty`, Windows **ConPTY** via `pywinpty`), xterm-256color + truecolor, alt screen, mouse reporting,
-  scroll regions, bracketed paste, OSC 52 clipboard (`osc52: write | read-write | off`), DEC line drawing — `vim`, `htop`, `less`, `tmux`, PowerShell all work.
+  scroll regions, bracketed paste, OSC 52 clipboard (`osc52: write | read-write | off`; `read-write` lets pytermwm's right click paste your clipboard), DEC line drawing — `vim`, `htop`, `less`, `tmux`, PowerShell all work.
   In full-screen apps letter effects animate only what you type (`alt_effects: typed`, or `all` / `off`, `--alt-effects`);
   colored cell backgrounds stay see-through over scenes (`cell_bg_alpha`, `--cell-bg-alpha`)
 * **UTF-8, CP437, ASCII, Latin-1** (`--encoding`) — `--cat file.ans` plays ANSI art (SAUCE stripped)

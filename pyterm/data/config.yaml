@@ -58,6 +58,7 @@ mqtt:
 alt_effects: typed          # letter effects in vim / mc / pytermwm: off | typed (only what you type) | all
 # cell_bg_alpha: 170        # 0..255 see-through for colored cell backgrounds (mc, htop); default: theme / auto
 osc52: write                # programs may set the clipboard via OSC 52: off | write | read-write
+                            #   read-write also lets them read it - needed for right click paste inside pytermwm
 right_click: copy-paste     # right click copies the selection or pastes: copy-paste | always | off
                             #   copy-paste: programs with mouse support (mc, pytermwm) get the click, Shift+right click is ours
                             #   always: right click is always pyterm's copy / paste

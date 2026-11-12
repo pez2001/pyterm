@@ -103,5 +103,36 @@ class ClipboardKeys(unittest.TestCase):
         self.assertEqual(self.sent, [])
 
 
+class Osc52Queries(unittest.TestCase):
+    """Programs asking for the clipboard (OSC 52 ; c ; ?) always get an answer, the content only when allowed."""
+
+    def setUp(self):
+        self.app = ClipboardKeys.app if hasattr(ClipboardKeys, 'app') else None
+        if self.app is None:
+            ClipboardKeys.setUpClass()
+            self.app = ClipboardKeys.app
+        self.pane = self.app.pane
+        self.out = []
+        self._write, self._get = self.pane.backend.write, appmod.clip_get
+        self.pane.backend.write = self.out.append
+        appmod.clip_get = lambda: 'secret'
+
+    def tearDown(self):
+        self.pane.backend.write, appmod.clip_get = self._write, self._get
+        self.app.cfg['osc52'] = 'write'
+
+    def ask(self, mode):
+        self.app.cfg['osc52'] = mode
+        self.pane.screen.clip_ops.append(('get', 'c'))
+        self.pane._clipboard_ops(self.pane.screen)
+        return self.out[-1]
+
+    def test_default_answers_empty(self):
+        self.assertEqual(self.ask('write'), '\x1b]52;c;\x1b\\')
+
+    def test_read_write_answers_with_the_clipboard(self):
+        self.assertEqual(self.ask('read-write'), '\x1b]52;c;c2VjcmV0\x1b\\')
+
+
 if __name__ == '__main__':
     unittest.main()
