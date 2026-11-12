@@ -1023,14 +1023,17 @@ class App:
             mods = pygame.key.get_mods()
             if ev.button == 1 and mods & pygame.KMOD_CTRL:
                 pane.open_url(cell)
-            elif pane.screen.mouse_mode and not mods & pygame.KMOD_SHIFT:
+            elif pane.screen.mouse_mode and not mods & pygame.KMOD_SHIFT and not (
+                    ev.button == 3 and self.cfg.get('right_click') == 'always'):
+                # programs with mouse support get the clicks; Shift+click is always pyterm's own (select / paste)
                 pane.backend.write(mouse_seq(ev.button - 1, cell[0], cell[1], True, pane.screen.mouse_sgr))
+                self._app_buttons = getattr(self, '_app_buttons', set()) | {ev.button}
             elif ev.button == 1:
                 pane.sel = (cell, cell)
                 pane.selecting = True
             elif ev.button == 2:
                 pane.paste_text(clip_get())
-            elif ev.button == 3 and self.cfg.get('right_click', 'copy-paste') == 'copy-paste':
+            elif ev.button == 3 and self.cfg.get('right_click', 'copy-paste') in ('copy-paste', 'always'):
                 # like Windows Terminal: right click copies the selection, or pastes when nothing is selected
                 if pane.sel and pane.sel[0] != pane.sel[1]:
                     clip_put(pane.selection_text())
@@ -1047,7 +1050,8 @@ class App:
                     self.notify('copied', 0.8)
                 else:
                     pane.sel = None
-            elif pane.screen.mouse_mode:
+            elif pane.screen.mouse_mode and ev.button in getattr(self, '_app_buttons', ()):
+                self._app_buttons.discard(ev.button)        # only release what the program saw pressed
                 cell = pane.cell_at(self.to_virtual(ev.pos))
                 pane.backend.write(mouse_seq(ev.button - 1, cell[0], cell[1], False, pane.screen.mouse_sgr))
 
@@ -1094,6 +1098,18 @@ class App:
                 return
         if self.plugins.emit('key', ev):
             return
+        if ev.key == K.K_INSERT and not alt and self.cfg.get('insert_keys', True):
+            # classic clipboard keys (xterm, Windows Terminal, PuTTY): Shift+Insert pastes, Ctrl+Insert copies.
+            # Without this they reach the program as ESC[2;2~, which most shells print as '2~'.
+            if shift and not ctrl:
+                pane.paste_text(clip_get())
+                return
+            if ctrl and not shift:
+                t = pane.selection_text()
+                if t:
+                    clip_put(t)
+                    self.notify('copied %d lines' % (t.count('\n') + 1), 1.2)
+                return
         if shift and not ctrl:
             page = pane.screen.rows - 1
             if ev.key == K.K_PAGEUP:

@@ -137,7 +137,7 @@ dressed up like a 1992 demoscene production:
 …and it stays useful for daily work:
 
 * real PTY (Linux `pty`, Windows **ConPTY** via `pywinpty`), xterm-256color + truecolor, alt screen, mouse reporting,
-  scroll regions, bracketed paste, OSC 52 clipboard (`osc52: write | read-write | off`), DEC line drawing — `vim`, `htop`, `less`, `tmux`, PowerShell all work.
+  scroll regions, bracketed paste, OSC 52 clipboard (`osc52: write | read-write | off`; `read-write` lets pytermwm's right click paste your clipboard), DEC line drawing — `vim`, `htop`, `less`, `tmux`, PowerShell all work.
   In full-screen apps letter effects animate only what you type (`alt_effects: typed`, or `all` / `off`, `--alt-effects`);
   colored cell backgrounds stay see-through over scenes (`cell_bg_alpha`, `--cell-bg-alpha`)
 * **UTF-8, CP437, ASCII, Latin-1** (`--encoding`) — `--cat file.ans` plays ANSI art (SAUCE stripped)
@@ -260,8 +260,8 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 | Ctrl+Shift+F5 / F6 / F7 / F8 | CRT / bloom / phosphor / sound pack |
 | Ctrl+Shift+B / M / F | background / Emerald Mine / font |
 | Ctrl+Shift+ + / − | pixel scale |
-| Ctrl+Shift+C / V, middle click | copy / paste (selection copies automatically) |
-| right click | copy the selection, or paste if nothing is selected (like Windows Terminal; `right_click: off`) |
+| Ctrl+Shift+C / V, Ctrl+Insert / Shift+Insert, middle click | copy / paste (selection copies automatically) |
+| right click | copy the selection, or paste if nothing is selected (like Windows Terminal). Programs with mouse support (mc, pytermwm) get the click – Shift+right click is always pyterm's; `right_click: always` makes it pyterm's everywhere, `off` disables it |
 | Ctrl+Shift+L | search scrollback |
 | Ctrl+Shift+X | screenshot |
 | Ctrl+Shift+G / J | record MP4 / GIF (press again to stop) |

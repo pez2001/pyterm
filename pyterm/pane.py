@@ -548,8 +548,11 @@ class Pane:
                 clip_put(v)
                 if v:
                     self.app.notify('clipboard: %d chars from %s' % (len(v), (sc.title or 'program')[:30]), 1.2)
-            elif op == 'get' and mode in ('read-write',):
-                data = base64.b64encode((clip_get() or '').encode('utf-8')).decode('ascii')
+            elif op == 'get':
+                # reading is opt-in (osc52: read-write): any output, e.g. a cat-ed file, could ask. Otherwise answer
+                # with an empty clipboard, so asking programs (pytermwm, nvim) don't wait for a reply that never comes.
+                text = clip_get() or '' if mode == 'read-write' else ''
+                data = base64.b64encode(text.encode('utf-8')).decode('ascii')
                 self.backend.write('\x1b]52;%s;%s\x1b\\' % (v, data))
         sc.clip_ops.clear()
 
