@@ -260,8 +260,8 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 | Ctrl+Shift+F5 / F6 / F7 / F8 | CRT / bloom / phosphor / sound pack |
 | Ctrl+Shift+B / M / F | background / Emerald Mine / font |
 | Ctrl+Shift+ + / − | pixel scale |
-| Ctrl+Shift+C / V, middle click | copy / paste (selection copies automatically) |
-| right click | copy the selection, or paste if nothing is selected (like Windows Terminal; `right_click: off`) |
+| Ctrl+Shift+C / V, Ctrl+Insert / Shift+Insert, middle click | copy / paste (selection copies automatically) |
+| right click | copy the selection, or paste if nothing is selected (like Windows Terminal). Programs with mouse support (mc, pytermwm) get the click – Shift+right click is always pyterm's; `right_click: always` makes it pyterm's everywhere, `off` disables it |
 | Ctrl+Shift+L | search scrollback |
 | Ctrl+Shift+X | screenshot |
 | Ctrl+Shift+G / J | record MP4 / GIF (press again to stop) |

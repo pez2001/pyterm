@@ -51,7 +51,8 @@ DEFAULTS = {
     'smooth_scroll_lines': 3, # pixel-smooth scroll for up to N lines per frame (0 = off)
     'shell_integration': True,
     'alt_effects': None,     # full-screen apps: off | typed | all  (None = theme, default typed)
-    'right_click': 'copy-paste',  # right mouse button: copy-paste (copy selection / paste) | off
+    'right_click': 'copy-paste',  # right mouse button: copy-paste (programs with mouse support get it) | always | off
+    'insert_keys': True,     # Shift+Insert pastes, Ctrl+Insert copies (false: send them to the program)
     'cell_bg_alpha': None,   # 0..255 alpha of cells with a background color (None = theme / auto)
     'osc52': 'write',        # programs may set the clipboard (vim, mc, tmux, ssh...): off | write | read-write
     'command_blocks': True,
