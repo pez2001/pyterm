@@ -6,7 +6,9 @@
   <img src="docs/media/showcase.gif" alt="pyterm showcase" width="720">
 </p>
 
-<p align="center"><a href="docs/media/showcase.mp4"><b>▶ Watch the full showcase video (MP4)</b></a></p>
+<p align="center"><a href="docs/media/showcase.mp4"><b>▶ Watch the full showcase video (MP4)</b></a><br>
+The show is run by the <b>zeroday</b> theme: it boots the deck (uplink splash, <i>ACCESS GRANTED</i>), roots a node
+with <code>hack</code>, lets all other themes take their turn - and gets the last word when a failing command trips the ICE.</p>
 
 A real, usable terminal emulator for **Windows and Linux**, written in Python + pygame,
 dressed up like a 1992 demoscene production:
@@ -189,7 +191,10 @@ dressed up like a 1992 demoscene production:
 | ![gameboy](docs/media/gameboy.png)<br>**gameboy** | ![weather](docs/media/weather.png)<br>**weather** |
 | ![zeroday](docs/media/zeroday.png)<br>**zeroday** | |
 
-Regenerate them with `python tools/screenshots.py docs/media` and the video with `python tools/showcase.py docs/media/showcase.mp4`.
+Regenerate them with `python tools/screenshots.py docs/media` and the video with `python tools/showcase.py docs/media/showcase.mp4`
+(zeroday hosts it - see the top of `tools/showcase.py`; the raw render is 1280x720, shrink it with
+`ffmpeg -i showcase.mp4 -vf scale=1024:576 -c:v libx264 -crf 27 -pix_fmt yuv420p -movflags +faststart out.mp4`; the README GIF is the
+first nine seconds from 3.6 s on: `ffmpeg -ss 3.6 -t 9 -i showcase.mp4 -vf "fps=10,scale=640:-1,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse" showcase.gif`).
 
 ## Install & run
 
@@ -270,6 +275,17 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 | Shift+PgUp/PgDn, wheel | scrollback |
 | Ctrl+Click | open URL (`ctrl_click_urls: false` to turn off) |
 | F11, Alt+Enter | fullscreen (`alt_enter_fullscreen: false` / `--no-alt-enter` leaves Alt+Enter to the program, e.g. pytermwm) |
+
+**Hotkey & mouse options** - hand keys to full-screen programs (pytermwm, vim, tmux ...) instead of pyterm (`config.yaml`, every one has a flag):
+
+| option | default | effect |
+|---|---|---|
+| `alt_enter_fullscreen` / `--no-alt-enter` | `false` in the bundled config | Alt+Enter toggles fullscreen (F11 always does) |
+| `disabled_hotkeys: [...]` / `--disable-hotkeys a,b` | `[]` | `alt_arrows` (pane focus), `ctrl_tab`, `ctrl_pgup_pgdn` (tab switching), `shift_pgup` (scrollback keys), or single hotkeys as `ctrl+shift+<key>`, e.g. `[ctrl+shift+t, alt_arrows]` |
+| `ctrl_click_urls` / `--no-ctrl-click` | `true` | Ctrl+Click opens URLs |
+| `middle_click_paste` / `--no-middle-paste` | `true` | middle mouse button pastes |
+| `copy_on_select` / `--no-copy-on-select` | `true` | selecting copies; off: Ctrl+Shift+C or right click |
+| `insert_keys`, `right_click` | `true`, `copy-paste` | Shift/Ctrl+Insert clipboard keys, right click behaviour |
 
 ## Performance & power
 

@@ -1,6 +1,9 @@
 """Render a showcase video of pyterm offline (no window needed):
 
     python tools/showcase.py showcase.mp4      (or .gif)
+
+The zeroday theme is the showrunner: it boots the show (uplink splash, a hack), the other themes take
+their turn in between, and zeroday gets the last word (a failed command trips the ICE).
 """
 import os
 import sys
@@ -20,7 +23,7 @@ FPS = 30
 
 
 def main(out='showcase.mp4'):
-    cfg, args = build_config(['--demo', '-t', 'neon', '--size', '1280x720', '--gpu', 'false'])
+    cfg, args = build_config(['--demo', '-t', 'zeroday', '--size', '1280x720', '--gpu', 'false'])
     cfg['intro'] = True
     app = App(cfg, args)
     rec = VideoRecorder(out, fps=FPS, fixed_step=True, max_width=1280)
@@ -46,10 +49,12 @@ def main(out='showcase.mp4'):
             run(1.0 / cps)
         app.pane.send('\r')
 
-    run(5.2)                      # boot intro
-    run(3.5)                      # demo output
+    run(5.6)                      # boot intro: zeroday's uplink splash (5.4 s)
+    run(2.5)                      # demo output under the hex rain and the globe
+    type_('hack')                 # the showrunner opens the show: packets fly, a node gets rooted
+    run(4.5)
     type_('lorem')
-    run(1.5)
+    run(2.0)
     for name, cmd in (('emerald_mine', 'lorem'), ('jumpnrun', 'lorem'), ('invaders', 'lorem'), ('walkers', 'lorem'),
                       ('c64', 'boxes'), ('amiga', 'lorem'), ('gameboy', 'info'), ('nes_famicom', 'logo'),
                       ('interlace', 'lorem'), ('vaporwave', 'lorem'), ('inferno', 'error'), ('sandstorm', 'lorem'),
@@ -92,6 +97,16 @@ def main(out='showcase.mp4'):
     run(0.5)
     type_('flood')
     run(3.0)
+    while len(app.all_panes()) > 1:   # close the splits again: the showrunner gets the whole window
+        app.close_pane()
+        run(0.3)
+    theme('zeroday')              # the showrunner has the last word
+    app.pane.send('clear\r')
+    run(0.6)
+    type_('hack')
+    run(3.5)
+    type_('error')                # a failing command trips the ICE: counter-traces, torn picture, TRACE meter
+    run(4.0)
     print('frames', rec.count, '->', rec.stop())
     pygame.quit()
 
