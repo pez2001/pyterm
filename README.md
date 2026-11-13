@@ -126,10 +126,25 @@ dressed up like a 1992 demoscene production:
     RGB-split lock-in), delete effect `derez` (scan lines torn apart in cyan/magenta), cursor effect `reticle`
     (targeting brackets that kick on every key, scan line on Enter), boot splash `uplink` (boot log, key
     cracked digit by digit, ACCESS GRANTED), sound pack `cyber`
+* **bosch** — an animated *garden of earthly delights* and the hell next door, my own pixel reading of the strange world of
+  Hieronymus Bosch (`-t bosch`; not a copy of any single painting, built from his motifs, always alive):
+  * **paradise** on the left: a pink fountain tower with crescent finials and people climbing a ladder up it, spires and a
+    blue pavilion by a pond, an owl blinking in a hollow tree, giant strawberries, cherries, raspberries and blueberries
+    that little naked people walk into and out of, glass spheres with figures bobbing inside, a pool with riders circling
+    it on goats, birds and fish, a giant mussel opening and closing over a couple, fish that walk on legs in funnel hats,
+    a flying fish with a knight, a flock of birds crossing the sky
+  * **hell** on the right: a burning city with flickering windows, smoke and sparks, the **Tree-Man** (egg torso, tree
+    legs standing in two boats, a hat with a bagpipe and tiny people), a bird-headed **Prince of Hell** on his pot throne
+    who gulps down sinners, a pair of **ears walking around with a knife**, a giant harp with a man strung in it, a lute,
+    bird-headed imps with spears, lava cracks
+  * it reacts to the terminal: every typed letter releases a little soul that floats up, a command that succeeds makes the
+    fountain surge and the riders gallop, a **failed command makes hell flare up** (the Prince screams, the screen reddens
+    and shakes), the bell wakes the owl, heavy output speeds everything up;
+    `bg_params: {bosch: {speed: 1.0, fire: 1.0, souls: true, riders: 12}}`
 * **interlace** emulation (`crt: {interlace: 0.8}`): alternating fields + motion combing, theme `interlace`
 * backgrounds: plasma, fire (the chunky oldschool one: `bg_params: {fire: {chunk: 6, palette: classic|red|blue|green|purple, height: 1.0}}`, `style: doom` for the fine speckled fire), tunnel, starfield, copper bars (`bg_params: {copper: {speed: 1.0}}`), synthwave grid, matrix rain, metaballs, rasterwave,
   shadebobs, rotozoomer, twister, Amiga boing ball, vectorballs, parallax, platformer, invaders, weather, dollhouse, railway, settlers, discocity, neonsigns, watermirror, aquarium, spacestation, garden, pinball, c64load, beach, fireworks, christmas, halloween, easter,
-  autumn, sakura, winter, seasonal, stone, zeroday (all stackable)
+  autumn, sakura, winter, seasonal, stone, zeroday, bosch (all stackable)
 * CRT stack: scanlines, vignette, bloom, phosphor afterglow, chromatic aberration, barrel curvature, flicker, noise, glitch
 * procedural sound packs (chime, typewriter, 8bit, glass, cyber): every key chimes, deletes blip, BEL rings
 * letter-writer output pacing: smart roll-out, authentic **baud rates** (300…115200), human typewriter
@@ -189,7 +204,7 @@ dressed up like a 1992 demoscene production:
 | ![c64](docs/media/c64.png)<br>**c64** | ![amiga](docs/media/amiga.png)<br>**amiga** |
 | ![vaporwave](docs/media/vaporwave.png)<br>**vaporwave** | ![inferno](docs/media/inferno.png)<br>**inferno** |
 | ![gameboy](docs/media/gameboy.png)<br>**gameboy** | ![weather](docs/media/weather.png)<br>**weather** |
-| ![zeroday](docs/media/zeroday.png)<br>**zeroday** | |
+| ![zeroday](docs/media/zeroday.png)<br>**zeroday** | ![bosch](docs/media/bosch.png)<br>**bosch** |
 
 Regenerate them with `python tools/screenshots.py docs/media` and the video with `python tools/showcase.py docs/media/showcase.mp4`
 (zeroday hosts it - see the top of `tools/showcase.py`; the raw render is 1280x720, shrink it with

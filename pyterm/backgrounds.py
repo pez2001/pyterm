@@ -1081,3 +1081,8 @@ BACKGROUNDS.update(CYBER)
 from .house import Dollhouse  # noqa: E402
 
 BACKGROUNDS['dollhouse'] = Dollhouse
+
+# bosch: an animated garden of earthly delights - and the hell next door
+from .bosch import Bosch  # noqa: E402
+
+BACKGROUNDS['bosch'] = Bosch

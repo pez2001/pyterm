@@ -1,0 +1,23 @@
+name: bosch
+description: "the garden of earthly delights - and the hell next door, after Hieronymus Bosch (my own reading, not a copy). A living painting: a pink fountain tower, riders circling a pool, giant fruits little people climb into, glass spheres, an owl in a hollow tree, a flying fish with a knight - and on the right a burning city, the Tree-Man in his boats, a bird-headed Prince of Hell gulping sinners, walking ears with a knife, a giant harp. Typed letters release little souls, a command that works makes the fountain surge and the riders gallop, a failed one makes hell flare up"
+palette: ['#1e1216', '#c62e2a', '#6a9a4a', '#e0b84a', '#5a86bc', '#c4607c', '#6ab4b8', '#e8dcc0',
+          '#5a4650', '#f08060', '#9cc874', '#ffd878', '#8cb4e0', '#f0a0b4', '#9ce0dc', '#fff4dc']
+fg: '#fff0cc'
+bg: '#2a1c1c'
+bg_alpha: 0
+cursor: '#ffd878'
+cursor_style: block
+cursor_effects: [glow]
+text_shadow: true
+font: builtin
+border: 14
+background: [bosch]
+bg_dim: 0.62
+bg_params:
+  bosch: {speed: 1.0, fire: 1.0, souls: true, riders: 12}
+letter_effect: dissolve
+delete_effect: burn
+alt_effects: typed
+crt: {scanlines: 0.08, vignette: 0.5, bloom: 0.3, noise: 0.05}
+sound: {pack: glass, volume: 0.3}
+banner: "\n  ~ the garden of earthly delights ~   mind the owl, and the ears\n\n"

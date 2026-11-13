@@ -37,7 +37,7 @@ background: [plasma]                   # stack: plasma fire tunnel starfield cop
                                        #        shadebobs rotozoom twister boing vectorballs parallax platformer invaders weather
                                        #        dollhouse railway settlers discocity neonsigns watermirror
                                        #        aquarium spacestation garden pinball c64load beach
-                                       #        fireworks christmas halloween easter autumn sakura winter seasonal stone zeroday (+plugins)
+                                       #        fireworks christmas halloween easter autumn sakura winter seasonal stone zeroday bosch (+plugins)
 bg_dim: 0.4                            # background brightness
 bg_params: {tunnel: {color: [255, 80, 220]}, starfield: {count: 600},
             dollhouse: {hour: null, shirt: '#e04848', hair: '#6e411e', pets: true, busy: 1.0},   # hour: fix the time of day
@@ -49,7 +49,9 @@ bg_params: {tunnel: {color: [255, 80, 220]}, starfield: {count: 600},
             c64load: {stripes: calm}, seasonal: {force: null},    # stripes: calm|authentic|off, force: halloween ...
             zeroday: {accent: '#00ffd0', accent2: '#ff2e88', alert: '#ff2846', ok: '#3cff78', home: [64.1, -21.9],
                       rain: 1.0, spin: 1.0, hud: true, globe: true, globe_x: 0.68, globe_y: 0.47, globe_size: 0.36,
-                      callsign: 'ZERODAY//OS'}}                   # home: your node [lat, lon]; rain 0 = off
+                      callsign: 'ZERODAY//OS'},                   # home: your node [lat, lon]; rain 0 = off
+            bosch: {speed: 1.0, fire: 1.0, souls: true, riders: 12}}  # speed: whole world; fire: burning city; souls: typed letters
+                                       # float up as little souls; riders: how many circle the pool
 letter_effect: flame                   # none flame laser sand dissolve construction teleport fluid decrypt drop glitch pop
                                        # bump shoot puff neon chisel breach random (+plugins)
 delete_effect: shatter                 # none shatter dust burn melt rainbow bricks invader spark firework leaves snow petals crumble derez random (+plugins)

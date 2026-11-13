@@ -27,6 +27,7 @@ SHOTS = [
     ('gameboy', 'gameboy', 'info', 2.5),
     ('weather', 'weather', 'weather', 5.0),
     ('zeroday', 'zeroday', 'hack', 3.0),
+    ('bosch', 'bosch', 'lorem', 6.0),
 ]
 
 
@@ -65,4 +66,4 @@ def main(outdir='docs/media', only=None):
 
 
 if __name__ == '__main__':
-    main(*(sys.argv[1:2] or ['docs/media']))
+    main(sys.argv[1] if len(sys.argv) > 1 else 'docs/media', sys.argv[2:] or None)     # optional: names of the shots to render
