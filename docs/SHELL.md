@@ -20,6 +20,8 @@ With them you get:
 * a notification (+ sound, + flash when pyterm is in the background) when a command took longer than
   `notify_after` seconds; plugins get a `command_done(exit_code, seconds, cmdline)` event
   (the fireworks plugin celebrates successful long builds)
+* `show NAME [duration=8 intensity=1 palette=gold style=...]` in the demo shell starts a show (fireworks, confetti,
+  lightning, meteors, lasers, shockwave); `show stop` ends them (see docs/THEMES.md → events)
 * new tabs / splits open in the directory of the focused pane
 
 ## Setup

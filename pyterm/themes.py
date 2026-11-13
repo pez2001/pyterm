@@ -23,6 +23,7 @@ XTERM16 = ['#000000', '#cd0000', '#00cd00', '#cdcd00', '#0000ee', '#cd00cd', '#0
 
 DEFAULT_THEME = {
     'name': 'default',
+    'events': {},            # event -> show(s): startup theme success fail command_ok command_failed bell alarm alarm_end
     'description': '',
     'palette': XTERM16,
     'fg': '#d0d0d0',

@@ -228,6 +228,8 @@ class App:
         if cfg.get('studio'):
             self.toggle_studio()
         self.alarm = None
+        self.shows = []
+        self._startup_shows = True
         self._swallow_text = 0.0
         self.mqtt = None
         if (cfg.get('mqtt') or {}).get('enabled') and not args.benchmark:
@@ -438,6 +440,7 @@ class App:
         self.layout()
         if not first:
             self.plugins.emit('theme', theme)
+            self.show_event('theme')
             if getattr(self, 'mqtt', None):
                 self.mqtt.publish_state()
 
@@ -499,6 +502,9 @@ class App:
         dur = (m['t1'] or 0) - (m['t0'] or 0)
         signals.cmd = (m['exit'], dur, time.time())
         self.plugins.emit('command_done', m['exit'], dur, m.get('cmdline', ''))
+        self.show_event('command_ok' if m['exit'] == 0 else 'command_failed')
+        if dur >= float(self.cfg.get('notify_after', 8) or 8):
+            self.show_event('success' if m['exit'] == 0 else 'fail')
         if self.mqtt:
             self.mqtt.command_done(m['exit'], dur, m.get('cmdline', ''), pane.screen.cwd)
         if pane.cursor:
@@ -660,6 +666,17 @@ class App:
                 return 'alarm NAME [message]   alarms: %s   (alarm stop)\r\n' % ' '.join(alarms.ALARMS) \
                     if not (args and args[0] == 'stop') else (self.stop_alarm() or '')
             self.trigger_alarm(args[0], ' '.join(args[1:]))
+            return ''
+        if c == 'show':
+            from . import shows
+            if args and args[0] == 'stop':
+                self.stop_shows()
+                return ''
+            if not args or args[0] not in shows.SHOWS:
+                return ('show NAME [duration=8 intensity=1 palette=gold style=willow]   shows: %s   (show stop)\r\n'
+                        % ' '.join(shows.SHOWS))
+            name, opts = shows.parse(' '.join(args))
+            self.trigger_show(name, **opts)
             return ''
         if c == 'cursors':
             from . import cursors
@@ -1168,9 +1185,48 @@ class App:
         self.alarm = cls(self, message, duration=duration, sound=sound)
         self.alarm.kind = name
         self.plugins.emit('alarm', name, message)
+        self.show_event('alarm')
         if self.mqtt:
             self.mqtt.alarm_changed(self.alarm)
         return self.alarm
+
+    # ------------------------------------------------------------ shows (pyterm.shows)
+    def trigger_show(self, name='fireworks', **opts):
+        """start a show (fireworks, confetti, lightning, ...); the same show again is retriggered"""
+        from . import shows
+        cls = shows.SHOWS.get(name)
+        if cls is None:
+            raise ValueError('unknown show %r (known: %s)' % (name, ', '.join(shows.SHOWS)))
+        if self.intro:
+            self.intro.skip()
+        for s in self.shows:
+            if s.name == name and not s.done:
+                s.retrigger(opts)
+                return s
+        s = cls(self, **opts)
+        s.name = name
+        self.shows.append(s)
+        del self.shows[:-6]
+        self.plugins.emit('show', name)
+        if self.mqtt:
+            self.mqtt.show_started(name)
+        return s
+
+    def stop_shows(self):
+        for s in self.shows:
+            s.stop()
+
+    def show_event(self, event):
+        """a theme can bind shows to events (theme `events:` - startup, theme, success, fail, command_ok, command_failed,
+        bell, alarm, alarm_end); `--no-shows` / `shows: false` turns that off"""
+        if not self.cfg.get('shows', True):
+            return
+        from . import shows
+        for name, opts in shows.specs((self.theme.get('events') or {}).get(event)):
+            try:
+                self.trigger_show(name, **opts)
+            except Exception as e:
+                self.plugins.log('theme event %s -> %s: %s' % (event, name, e))
 
     def stop_alarm(self, dismissed=False):
         a = self.alarm
@@ -1183,10 +1239,11 @@ class App:
         if self.mqtt:
             self.mqtt.alarm_changed(None, a)
         self.plugins.emit('alarm_end', getattr(a, 'kind', a.name), dismissed)
+        self.show_event('alarm_end')
 
     # ------------------------------------------------------------ frame
     def is_animated(self):
-        if self.intro or self.alarm or self.notes or self.shake > 0.02 or self.post.flash > 0.02 or self.video \
+        if self.intro or self.alarm or self.shows or self.notes or self.shake > 0.02 or self.post.flash > 0.02 or self.video \
                 or self.t < self.anim_until or self.show_help or self.plugins.anim:
             return True
         if self.bg and self.bg.layers:
@@ -1229,6 +1286,19 @@ class App:
                 self.intro = None
                 for p in panes_all:
                     p.renderer.full = True
+        if self._startup_shows and not self.intro:
+            self._startup_shows = False
+            self.show_event('startup')
+        if self.shows:
+            for s in self.shows:
+                try:
+                    s.update(dt)
+                except Exception as e:
+                    self.plugins.log('show %s: %s' % (s.name, e))
+                    s.done = True
+            for s in [s for s in self.shows if s.done]:
+                self.shows.remove(s)
+                self.plugins.emit('show_end', s.name)
         self.plugins.emit('frame', dt)
         self.plugins.poll()
         if int(self.t * 2) != int((self.t - dt) * 2):
@@ -1282,6 +1352,12 @@ class App:
             pygame.draw.rect(vs, themes.hex2rgb(th.get('cursor', '#ffcc00')), r, 1)
         self.plugins.emit('draw', vs, focus.rect)
         self._overlays(vs)
+        for s in self.shows:
+            try:
+                s.draw(vs, self)
+            except Exception as e:
+                self.plugins.log('show %s draw: %s' % (s.name, e))
+                s.done = True
         if self.alarm:
             self.alarm.draw(vs, self)
         if self.intro:

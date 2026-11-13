@@ -35,3 +35,9 @@ splash: uplink
 crt: {scanlines: 0.22, vignette: 0.55, bloom: 0.6, noise: 0.05, glitch: 0.04, aberration: 1}
 sound: {pack: cyber, volume: 0.3}
 banner: "\n  \e[38;2;0;255;208m▞▚ ZERODAY//OS\e[0m  uplink secure \e[38;2;60;255;120m●\e[0m  3 hops  \e[38;2;90;120;130mstay out of the logs\e[0m\n\n"
+
+# shows on events (see docs/THEMES.md)
+events:
+  fail: lightning duration=5
+  command_failed: shockwave duration=2
+  success: fireworks style=strobe palette=mono duration=5 finale=false

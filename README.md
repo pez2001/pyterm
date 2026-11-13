@@ -171,6 +171,11 @@ dressed up like a 1992 demoscene production:
   **Alarms** – red alert (klaxon + rotating beacon), warning (hazard tape), doorbell, timer (ringing alarm
   clock), calm reminder, or your own as a plugin – triggered from Home Assistant, dismissed with any key,
   and Home Assistant gets told whether someone acknowledged it. Try `alarm redalert hello` in the demo shell.
+  **Shows** – a thunderstorm, a laser night, confetti cannons, a meteor shower, a shockwave from the cursor and a
+  proper fireworks display (peony, willow, heart, crossette, palm, spiral, saturn ... shells with a finale).
+  They run over everything, never steal a key, and start from Home Assistant buttons, a theme's `events:`
+  (`success: fireworks`, `fail: lightning`, `bell: shockwave`), a plugin (`api.app.trigger_show('confetti')`) or the
+  demo shell: `show fireworks style=willow duration=15 palette=gold`.
   Never: typing into the terminal. Details & automation examples: docs/HOMEASSISTANT.md
 * **YAML** themes/config/fonts — all hot-reloaded when you save them in any editor
 * **plugins** (single `.py` files, hot reload, can add letter effects, delete effects, backgrounds, overlays, hotkeys, commands)

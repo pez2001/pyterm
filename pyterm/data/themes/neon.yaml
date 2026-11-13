@@ -16,3 +16,8 @@ letter_effect: flame
 delete_effect: shatter
 crt: {scanlines: 0.3, vignette: 0.5, bloom: 0.55, flicker: 0.02, noise: 0.1, aberration: 1}
 sound: {pack: chime, volume: 0.35}
+
+# shows on events (see docs/THEMES.md): success/fail = a command that ran >= notify_after seconds
+events:
+  success: confetti palette=neon duration=6
+  fail: shockwave

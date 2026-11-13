@@ -39,6 +39,11 @@ background: [plasma]                   # stack: plasma fire tunnel starfield cop
                                        #        aquarium spacestation garden pinball c64load beach
                                        #        fireworks christmas halloween easter autumn sakura winter seasonal stone zeroday bosch (+plugins)
 bg_dim: 0.4                            # background brightness
+events:                                # shows on events (fireworks confetti lightning meteors lasers shockwave + plugins)
+  success: fireworks style=willow      #   a command that ran >= notify_after seconds and succeeded / failed
+  fail: lightning duration=5           #   other events: startup theme command_ok command_failed bell alarm alarm_end
+  bell: shockwave                      #   value: "name key=value ..." or a list of them; options: duration intensity
+                                       #   palette (gold ice neon ... "#f00,#0f0" theme) sound  style/finale (fireworks)
 bg_params: {tunnel: {color: [255, 80, 220]}, starfield: {count: 600},
             dollhouse: {hour: null, shirt: '#e04848', hair: '#6e411e', pets: true, busy: 1.0},   # hour: fix the time of day
             matrix: {color: '#00ff41', density: 1.0, cell: 8, speed: 1.0},     # cell: 8 or 16 (bigger glyphs)

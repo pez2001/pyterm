@@ -68,5 +68,6 @@ disabled_hotkeys: []        # any of: alt_arrows (focus pane) ctrl_tab ctrl_pgup
                             #   or single hotkeys as ctrl+shift+<key>, e.g. [ctrl+shift+t, ctrl+shift+w, alt_arrows]
 ctrl_click_urls: true       # Ctrl+Click opens URLs
 middle_click_paste: true    # middle mouse button pastes
+shows: true                 # themes can trigger shows (fireworks, confetti, lightning ...) via `events:`; false = never
 copy_on_select: true        # selecting text copies it (false: use Ctrl+Shift+C or right click)
 insert_keys: true           # Shift+Insert pastes, Ctrl+Insert copies (false: the program gets the keys)

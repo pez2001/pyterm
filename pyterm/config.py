@@ -56,6 +56,7 @@ DEFAULTS = {
     'disabled_hotkeys': [],  # built-in hotkeys handed to the program instead: alt_arrows ctrl_tab ctrl_pgup_pgdn shift_pgup ctrl+shift+<key>
     'ctrl_click_urls': True,     # Ctrl+Click opens URLs (false: the click is left alone)
     'middle_click_paste': True,  # middle mouse button pastes
+    'shows': True,               # themes may start shows (fireworks, lightning ...) on events: success, fail, bell ...
     'copy_on_select': True,      # selecting with the mouse copies to the clipboard (false: Ctrl+Shift+C / right click)
     'insert_keys': True,     # Shift+Insert pastes, Ctrl+Insert copies (false: send them to the program)
     'cell_bg_alpha': None,   # 0..255 alpha of cells with a background color (None = theme / auto)
@@ -129,6 +130,8 @@ def parse_args(argv=None):
     ap.add_argument('--no-ctrl-click', dest='ctrl_click_urls', action='store_false', default=None, help='Ctrl+Click does not open URLs')
     ap.add_argument('--no-middle-paste', dest='middle_click_paste', action='store_false', default=None, help='middle click does not paste')
     ap.add_argument('--no-copy-on-select', dest='copy_on_select', action='store_false', default=None, help='selecting does not copy automatically')
+    ap.add_argument('--no-shows', dest='shows', action='store_false', default=None,
+                    help='themes do not start shows (fireworks, lightning ...) on events')
     ap.add_argument('--no-alt-enter', dest='alt_enter_fullscreen', action='store_false', default=None,
                     help='Alt+Enter no longer toggles fullscreen (F11 still does) - the program gets the key')
     ap.add_argument('-e', '--shell', help='command to run')

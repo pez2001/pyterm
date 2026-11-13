@@ -36,6 +36,7 @@ from . import __version__, signals
 ANSI = re.compile(r'\x1b(\[[0-?]*[ -/]*[@-~]|\][^\x07]*(\x07|\x1b\\)|[@-Z\\-_])')
 
 ALARM_KEYS = ('alarm', 'alarm_stop', 'alarm_message', 'alarm_duration')
+SHOW_KEYS = ('show', 'show_stop')
 
 DEFAULTS = {
     'enabled': False,
@@ -52,6 +53,7 @@ DEFAULTS = {
     'publish_text': False,       # also publish command lines and the last error line (privacy!)
     'allow_control': True,       # accept settings changes from Home Assistant
     'allow_alarms': True,        # accept alarms (set/alarm) - independent of allow_control
+    'allow_shows': True,         # accept shows - fireworks, confetti, lightning ... (set/show) - independent of allow_control
     'long_command': 10,          # seconds: fire a long_command event
     'debug': False,              # print every message sent / received to the console
 }
@@ -166,9 +168,11 @@ class MqttBridge:
         print('[pyterm] mqtt: connected to %s:%s, topics %s/#' % (self.cfg['host'], self.cfg['port'], self.base))
         if self.cfg['allow_control']:
             client.subscribe(self.base + '/set/#', qos=1)
-        elif self.cfg['allow_alarms']:
-            for k in ALARM_KEYS:
-                client.subscribe(self.base + '/set/' + k, qos=1)
+        else:
+            for flag, keys in (('allow_alarms', ALARM_KEYS), ('allow_shows', SHOW_KEYS)):
+                if self.cfg[flag]:
+                    for k in keys:
+                        client.subscribe(self.base + '/set/' + k, qos=1)
         client.subscribe(self.cfg['discovery_prefix'] + '/status', qos=1)   # HA restart -> resend discovery
 
     def _on_disconnect(self, client, userdata, *args):
@@ -245,7 +249,7 @@ class MqttBridge:
 
         add('event', 'terminal', 'Terminal event', state_topic=b + '/event', icon='mdi:console',
             event_types=['command_failed', 'command_succeeded', 'long_command', 'error_output', 'bell',
-                         'alarm_started', 'alarm_dismissed', 'alarm_finished', 'alarm_stopped'])
+                         'alarm_started', 'alarm_dismissed', 'alarm_finished', 'alarm_stopped', 'show_started'])
         add('binary_sensor', 'alarm_active', 'Alarm active', state_topic=b + '/alarm_active', device_class='safety',
             icon='mdi:alarm-light')
         add('sensor', 'alarm_state', 'Alarm', state_topic=b + '/alarm', icon='mdi:alarm-bell')
@@ -260,6 +264,12 @@ class MqttBridge:
             add('number', 'alarm_duration', 'Alarm duration', command_topic=b + '/set/alarm_duration',
                 state_topic=b + '/alarm_duration', min=0, max=600, step=5, unit_of_measurement='s', mode='box',
                 icon='mdi:timer-outline')
+        if self.cfg['allow_shows']:
+            from . import shows
+            for name, cls in shows.SHOWS.items():
+                add('button', 'show_' + name, 'Show %s' % (cls.label or name), icon=cls.ha_icon,
+                    command_topic=b + '/set/show', payload_press=name)
+            add('button', 'show_stop', 'Stop shows', command_topic=b + '/set/show_stop', icon='mdi:stop-circle-outline')
         add('binary_sensor', 'last_failed', 'Last command failed', state_topic=b + '/last_failed', device_class='problem')
         add('binary_sensor', 'active', 'User active', state_topic=b + '/active', icon='mdi:keyboard')
         add('sensor', 'last_exit', 'Last exit code', state_topic=b + '/last_exit', icon='mdi:numeric')
@@ -297,7 +307,7 @@ class MqttBridge:
             add('text', 'notify', 'Show message', command_topic=b + '/set/notify', max=200, icon='mdi:message-text')
             add('text', 'scroller_text', 'Scroller text', command_topic=b + '/set/scroller_text', max=255,
                 icon='mdi:format-text')
-            for key, name, icon in (('fireworks', 'Fireworks', 'mdi:firework'), ('screenshot', 'Screenshot', 'mdi:camera'),
+            for key, name, icon in (('screenshot', 'Screenshot', 'mdi:camera'),
                                     ('next_theme', 'Next theme', 'mdi:skip-next')):
                 add('button', key, name, command_topic=b + '/set/' + key, icon=icon)
         for comp, oid, conf in ents:
@@ -440,6 +450,9 @@ class MqttBridge:
             self.inbox.put(('_connected', None))
             self._wake()
 
+    def show_started(self, name):
+        self.event('show_started', show=name)
+
     def alarm_changed(self, alarm, old=None):
         """called by the app when an alarm starts (alarm) or ends (alarm=None, old=the finished one)"""
         if alarm:
@@ -478,6 +491,16 @@ class MqttBridge:
             elif key == 'alarm_duration':
                 self.alarm_duration = max(0.0, float(v or 0))
                 self.pub('alarm_duration', '%g' % self.alarm_duration)
+            return
+        if key in SHOW_KEYS:
+            if not self.cfg['allow_shows']:
+                return
+            if key == 'show':
+                from . import shows
+                name, opts = shows.parse(v)
+                app.trigger_show(name, **opts)
+            else:
+                app.stop_shows()
             return
         if not self.cfg['allow_control']:
             return
@@ -536,8 +559,6 @@ class MqttBridge:
             if v:
                 app.notify(v[:200], 8)
         elif key == 'fireworks':
-            hk = app.plugins.hotkeys.get('k')
-            if hk:
-                hk[1]()
+            app.trigger_show('fireworks')
         elif key == 'screenshot':
             app.screenshot()

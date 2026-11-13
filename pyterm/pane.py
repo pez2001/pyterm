@@ -282,6 +282,7 @@ class Pane:
             app.post.flash = max(app.post.flash, 0.4)
             app.post.flash_rgb = (255, 255, 255)
             app.plugins.emit('bell')
+            app.show_event('bell')
         r = (st['puts'] + st['dels']) / max(dt, 1e-3)
         self.rate += (r - self.rate) * min(1.0, dt * 3)
         self.energy = min(2.0, self.rate / 2500.0)

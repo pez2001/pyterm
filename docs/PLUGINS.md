@@ -32,6 +32,7 @@ def unregister(api):   # optional
 | `bell` | `fn()` | BEL |
 | `theme` | `fn(theme)` | theme applied |
 | `command` | `fn(cmd) -> str or None` | demo shell commands nobody else handled |
+| `show` / `show_end` | `fn(name)` | a show (fireworks, confetti, ...) started / ended |
 | `alarm` / `alarm_end` | `fn(name, message)` / `fn(name, dismissed)` | an alarm started / ended (dismissed = someone pressed a key) |
 
 ## API
@@ -52,6 +53,8 @@ def unregister(api):   # optional
 | background `wants_text = True` | the layer gets `self.text_layers = [(text_surface, (x, y)), ...]` each frame (see `pyterm/water.py`) |
 | `api.register_splash(name, cls)` | boot sequence: subclass `pyterm.splash.Splash` (`update(dt)`, `draw(surf, colored)`, `skip()`, set `done`); themes use it with `splash: name` |
 | `api.register_alarm(name, cls)` | alarm (sound + full-screen display): subclass `pyterm.alarms.Alarm` – `sound(snd)` → `(pygame Sound, repeat seconds)`, `draw(surf, app)`; helpers `self.card(surf, app, title, rgb, icon=)`, `self.edge(surf, rgb, width, k)`, `self.tint(surf, rgb)`; class attrs `duration`, `label`, `ha_icon`. Gets its own Home Assistant button automatically – example: `plugins/party_alarm.py` |
+| `api.register_show(name, cls)` | show (full-window effect over everything, several at once, never takes keys): subclass `pyterm.shows.Show` – `start()`, `step(dt)`, `draw(surf, app)`; helpers `self.emit(...)` (particles, 2x2 on big windows), `self.glow(surf, x, y, r, rgb)`, `self.layer(surf)` (additive scratch surface), `self.snd('boom')`, `self.pal` (palette option), `self.intensity`, `self.fade`; class attrs `duration`, `label`, `ha_icon`. Gets a Home Assistant button and can be named in a theme's `events:` |
+| `api.app.trigger_show(name, **options)` / `api.app.stop_shows()` | start a show (`duration`, `intensity`, `palette`, `sound`, ...) / end all |
 | `api.app.trigger_alarm(name, message, duration=None)` / `api.app.stop_alarm()` | start / stop an alarm yourself |
 | `api.add_hotkey(key, fn, desc)` | Ctrl+Shift+`key` (pygame key name) |
 | `api.notify(text)` | on-screen message |

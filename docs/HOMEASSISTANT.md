@@ -21,6 +21,7 @@ mqtt:
   publish_text: false   # true = also send command lines and the last error line
   allow_control: true   # false = Home Assistant can only watch, not change anything
   allow_alarms: true    # alarms work even with allow_control: false; false = no alarms
+  allow_shows: true     # shows (fireworks, confetti, lightning ...) work even with allow_control: false
   long_command: 10      # seconds -> long_command event
 ```
 
@@ -78,7 +79,7 @@ If messages go out but Home Assistant shows nothing: check the MQTT integration 
 | `number` background brightness, volume | 0 … 1 |
 | `text` show message | shown on screen for 8 s |
 | `text` scroller text | runs through the big Amiga sine scroller |
-| `button` fireworks, screenshot, next theme | |
+| `button` screenshot, next theme | |
 
 Deliberately **not** possible: typing into the terminal or running commands. Remote control is limited to looks.
 
@@ -146,6 +147,41 @@ automation:
       - action: button.press
         target: {entity_id: button.pyterm_mypc_alarm_doorbell}
 ```
+
+## Shows (fireworks, lightning, confetti ...)
+
+Full-window effects that run over everything and **never touch the keyboard** (nothing to dismiss, several can
+run at once, they end by themselves). Every show gets a button (`button.pyterm_<id>_show_<name>`) plus
+**Stop shows**; `allow_shows: false` switches them off (independent of `allow_control`).
+
+| show | |
+|---|---|
+| `fireworks` | scripted display: peony, chrysanthemum, willow, ring, heart, crossette, palm, strobe, spiral, saturn, two-colour shells; mortar thumps, flashes, finale (pressing the button again extends it) |
+| `confetti` | cannons left and right and a paper rain |
+| `lightning` | thunderstorm: forked bolts, flickering flashes, thunder, a darker sky |
+| `meteors` | shooting stars that burn up in sparks at the bottom |
+| `lasers` | sweeping beams with a strobing beat |
+| `shockwave` | rings rolling out from the cursor, a thump and a shake |
+
+Options (all optional): `duration` (seconds), `intensity` (0.2 … 4), `palette` (`classic gold ice neon pastel fire
+rainbow mono theme` or `"#ff0000,#00ff00"`), `sound`, and for fireworks `style` (`mix` or one of the styles) and
+`finale`. Publish them with the show name in `set/show`, either as `name key=value ...` or as JSON:
+
+```bash
+mosquitto_pub -t pyterm/mypc/set/show -m "fireworks style=heart palette=pastel duration=15"
+mosquitto_pub -t pyterm/mypc/set/show -m '{"show": "confetti", "intensity": 2, "palette": "neon"}'
+mosquitto_pub -t pyterm/mypc/set/show_stop -m ""
+```
+
+```yaml
+- alias: Party when the build finished
+  triggers: [{trigger: state, entity_id: binary_sensor.build_ok, to: "on"}]
+  actions:
+    - action: mqtt.publish
+      data: {topic: pyterm/mypc/set/show, payload: "fireworks duration=10"}
+```
+
+pyterm also reports `show_started` on the terminal event entity.
 
 ## Example automations
 
@@ -251,7 +287,8 @@ Base topic `pyterm/<device_id>/`:
 | `event` | JSON `{"event_type": "command_failed", "exit_code": 1, "duration": 0.4, ...}` (not retained) |
 | `last_exit`, `last_failed`, `last_duration`, `last_command`, `last_error`, `active`, `output_rate` | retained states |
 | `theme`, `background`, `letter_effect`, `delete_effect`, `cursor`, `font`, `zen`, `sound`, `mine`, `scroller`, `bg_dim`, `volume` | retained states |
-| `set/<name>` | commands: same names as above + `notify`, `scroller_text`, `fireworks`, `screenshot`, `next_theme` |
+| `set/<name>` | commands: same names as above + `notify`, `scroller_text`, `fireworks` (= show fireworks), `screenshot`, `next_theme` |
+| `set/show`, `set/show_stop` | shows (see above) |
 | `alarm`, `alarm_active`, `alarm_message`, `alarm_duration` / `set/alarm`, `set/alarm_stop` | alarms (see above) |
 
 ```bash

@@ -140,6 +140,7 @@ HELP = (rgb(120, 220, 255) + 'pyterm demo shell' + R + ' - commands:\r\n'
         '  cursor <style> [effect ...|none]   e.g.  cursor hero ripple trail\r\n'
         '  effects  themes  bgs  cursors      (names may be random, random:a,b or pick)\r\n'
         '  alarm <redalert|warning|doorbell|timer|calm> [message]   alarm stop   splash <name>\r\n'
+        '  show <fireworks|confetti|lightning|meteors|lasers|shockwave> [duration=8 intensity=1 palette=gold]   show stop\r\n'
         'Hotkeys: Ctrl+Shift+H shows all.\r\n')
 
 LOREM = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut '

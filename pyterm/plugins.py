@@ -24,7 +24,7 @@ import traceback
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')   # bundled assets (themes, fonts, sounds, plugins, shell, config.yaml)
 EVENTS = ('frame', 'draw', 'draw_under', 'post', 'key', 'output', 'put', 'del', 'bell', 'theme', 'command',
-          'command_done', 'alarm', 'alarm_end')
+          'command_done', 'alarm', 'alarm_end', 'show', 'show_end')
 
 
 class PluginAPI:
@@ -113,6 +113,18 @@ class PluginAPI:
         cls.name = name
         alarms.ALARMS[name] = cls
         self._p.owned.append(('alarm', name))
+        mq = getattr(self.app, 'mqtt', None)
+        if mq:
+            mq.rediscover()
+
+    def register_show(self, name, cls):
+        """show (full-window effect on top of everything, several can run at once): subclass pyterm.shows.Show
+        (start(), step(dt), draw(surf, app)); triggerable from Home Assistant, themes (`events:`), the demo shell
+        (`show NAME`) and app.trigger_show(name, **options)"""
+        from . import shows
+        cls.name = name
+        shows.SHOWS[name] = cls
+        self._p.owned.append(('show', name))
         mq = getattr(self.app, 'mqtt', None)
         if mq:
             mq.rediscover()
@@ -239,12 +251,12 @@ class PluginManager:
             self.hooks[e] = [(o, f) for (o, f) in self.hooks[e] if o is not p]
         for k in [k for k, v in self.hotkeys.items() if v[0] is p]:
             del self.hotkeys[k]
-        from . import alarms, backgrounds, cursors, effects, splash
+        from . import alarms, backgrounds, cursors, effects, shows, splash
         had_cursor = False
         for kind, name in p.owned:
             reg = {'appear': effects.APPEAR, 'vanish': effects.VANISH, 'bg': backgrounds.BACKGROUNDS,
                    'cursor': cursors.CURSORS, 'cursor_fx': cursors.CURSOR_EFFECTS, 'splash': splash.SPLASHES,
-                   'alarm': alarms.ALARMS}[kind]
+                   'alarm': alarms.ALARMS, 'show': shows.SHOWS}[kind]
             had_cursor = had_cursor or kind.startswith('cursor')
             reg.pop(name, None)
             if kind == 'appear' and name in effects.RANDOM_POOL:
