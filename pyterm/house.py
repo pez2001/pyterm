@@ -1088,8 +1088,8 @@ class Dollhouse(Background):
                 s.fill((200, 70, 70), (x - 10, y + 12, 5, 4))
                 s.fill((255, 255, 255), (x - 9, y + 13, 3, 2))
             elif a == 'clean':
-                s.fill((90, 90, 110), (hx + (1 if not flip else 2), y + 12, 1, 9))
-                s.fill((230, 90, 90), (hx - 1, y + 20, 6, 3))
+                s.fill((90, 90, 110), (hx + (-1 if not flip else 2), y + 8, 1, 4))     # handle: from the hand down to the brush
+                s.fill((230, 90, 90), (hx + (-2 if not flip else -1), y + 12, 6, 2))   # brush sits on the floor (feet end at y + 14)
             elif a == 'feed':
                 s.fill((240, 200, 110), (hx, y + 11, 4, 4))
             elif a == 'mail':
