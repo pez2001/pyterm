@@ -111,10 +111,27 @@ def pet(table, pose, flip):
                'r': (230, 90, 110), 'l': (130, 80, 40), 'c': (240, 236, 228), 'O': (236, 150, 70), 'g': (70, 190, 110),
                'w': (255, 255, 255)}
         s = sprite(table[pose], pal)
+        if table is CAT:
+            s = _outlined(s)
         if flip:
             s = pygame.transform.flip(s, True, False)
         _pets[key] = s
     return s
+
+
+def _outlined(spr, col=(64, 48, 66)):
+    """dark outline on top and both sides (not below: the feet stand on the floor) - the white cat would vanish
+    against the light walls otherwise. The result is 2 px wider and 1 px taller than the sprite."""
+    w, h = spr.get_size()
+    o = pygame.Surface((w + 2, h + 1), pygame.SRCALPHA)
+    o.fill((0, 0, 0, 0))
+    for y in range(h):
+        for x in range(w):
+            if spr.get_at((x, y))[3]:
+                for dx, dy in ((-1, 0), (1, 0), (0, -1)):
+                    o.set_at((x + 1 + dx, y + 1 + dy), col)
+    o.blit(spr, (1, 1))
+    return o
 
 
 class Mover:
@@ -1137,7 +1154,7 @@ class Dollhouse(Background):
         x = int(cat.x)
         if cat.path:
             img = pet(CAT, 'walk1' if int(t * 8) % 2 else 'walk2', cat.face > 0)
-            s.blit(img, (x - 4, int(base) - img.get_height()))
+            s.blit(img, (x - 5, int(base) - img.get_height()))
             return
         lift = 0
         if st == 'nap':
@@ -1154,6 +1171,6 @@ class Dollhouse(Background):
             img = pet(CAT, 'sit', flip)
             if st == 'sit' and abs(cat.x - self.spots['window'][1]) < 3:
                 lift = 17                                                    # on top of the piano, looking out
-        s.blit(img, (x - 3, int(base) - img.get_height() - lift))
+        s.blit(img, (x - 4, int(base) - img.get_height() - lift))
         if st in ('sit', 'desk', 'beg') and int(t * 2) % 5 == 0:                 # tail flick
             s.fill((240, 236, 228), (x + 4, int(base) - 3 - lift, 1, 1))
