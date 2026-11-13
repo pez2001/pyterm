@@ -7,6 +7,7 @@ theme: neon
 width: 1280
 height: 800
 fullscreen: false
+alt_enter_fullscreen: false  # true: Alt+Enter also toggles fullscreen (F11 always does); false: the program gets Alt+Enter (pytermwm: new window)
 # shell: powershell.exe    # default: pwsh/powershell on Windows, $SHELL on Linux
 backend: auto              # auto | pty | pipes
 encoding: utf-8            # utf-8 | cp437 | ascii | latin-1
@@ -62,4 +63,10 @@ osc52: write                # programs may set the clipboard via OSC 52: off | w
 right_click: copy-paste     # right click copies the selection or pastes: copy-paste | always | off
                             #   copy-paste: programs with mouse support (mc, pytermwm) get the click, Shift+right click is ours
                             #   always: right click is always pyterm's copy / paste
+# hotkeys & mouse - hand keys to full-screen programs (pytermwm, vim, tmux ...) instead of pyterm
+disabled_hotkeys: []        # any of: alt_arrows (focus pane) ctrl_tab ctrl_pgup_pgdn (switch tabs) shift_pgup (scrollback keys)
+                            #   or single hotkeys as ctrl+shift+<key>, e.g. [ctrl+shift+t, ctrl+shift+w, alt_arrows]
+ctrl_click_urls: true       # Ctrl+Click opens URLs
+middle_click_paste: true    # middle mouse button pastes
+copy_on_select: true        # selecting text copies it (false: use Ctrl+Shift+C or right click)
 insert_keys: true           # Shift+Insert pastes, Ctrl+Insert copies (false: the program gets the keys)

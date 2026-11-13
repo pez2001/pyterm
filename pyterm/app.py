@@ -1021,7 +1021,7 @@ class App:
                 self.tab.focus = pane
             cell = pane.cell_at(vpos)
             mods = pygame.key.get_mods()
-            if ev.button == 1 and mods & pygame.KMOD_CTRL:
+            if ev.button == 1 and mods & pygame.KMOD_CTRL and self.cfg.get('ctrl_click_urls', True):
                 pane.open_url(cell)
             elif pane.screen.mouse_mode and not mods & pygame.KMOD_SHIFT and not (
                     ev.button == 3 and self.cfg.get('right_click') == 'always'):
@@ -1031,7 +1031,7 @@ class App:
             elif ev.button == 1:
                 pane.sel = (cell, cell)
                 pane.selecting = True
-            elif ev.button == 2:
+            elif ev.button == 2 and self.cfg.get('middle_click_paste', True):
                 pane.paste_text(clip_get())
             elif ev.button == 3 and self.cfg.get('right_click', 'copy-paste') in ('copy-paste', 'always'):
                 # like Windows Terminal: right click copies the selection, or pastes when nothing is selected
@@ -1046,14 +1046,22 @@ class App:
             if pane.selecting:
                 pane.selecting = False
                 if pane.sel and pane.sel[0] != pane.sel[1]:
-                    clip_put(pane.selection_text())
-                    self.notify('copied', 0.8)
+                    if self.cfg.get('copy_on_select', True):
+                        clip_put(pane.selection_text())
+                        self.notify('copied', 0.8)
                 else:
                     pane.sel = None
             elif pane.screen.mouse_mode and ev.button in getattr(self, '_app_buttons', ()):
                 self._app_buttons.discard(ev.button)        # only release what the program saw pressed
                 cell = pane.cell_at(self.to_virtual(ev.pos))
                 pane.backend.write(mouse_seq(ev.button - 1, cell[0], cell[1], False, pane.screen.mouse_sgr))
+
+    def hk_off(self, name):
+        """True when the user disabled this built-in hotkey group (config: disabled_hotkeys) - the program gets the keys."""
+        v = self.cfg.get('disabled_hotkeys') or ()
+        if isinstance(v, str):
+            v = v.split(',')
+        return name in {str(x).strip().lower() for x in v}
 
     def on_key(self, ev):
         mods = ev.mod
@@ -1077,21 +1085,22 @@ class App:
             elif ev.key in (K.K_RETURN, K.K_KP_ENTER):
                 pane.do_search()
             return
-        if (ev.key == K.K_RETURN and mods & K.KMOD_ALT) or ev.key == K.K_F11:
+        if (ev.key == K.K_RETURN and mods & K.KMOD_ALT and self.cfg.get('alt_enter_fullscreen', True)) or ev.key == K.K_F11:
             self.presenter.toggle_fullscreen()
             self.layout()
             return
         ctrl, shift, alt = mods & K.KMOD_CTRL, mods & K.KMOD_SHIFT, mods & K.KMOD_LALT
-        if ctrl and ev.key == K.K_TAB:
+        if ctrl and ev.key == K.K_TAB and not self.hk_off('ctrl_tab'):
             self.goto_tab((self.tab_i + (-1 if shift else 1)) % len(self.tabs))
             return
-        if ctrl and not shift and ev.key in (K.K_PAGEUP, K.K_PAGEDOWN) and len(self.tabs) > 1:
+        if ctrl and not shift and ev.key in (K.K_PAGEUP, K.K_PAGEDOWN) and len(self.tabs) > 1 and not self.hk_off('ctrl_pgup_pgdn'):
             self.goto_tab((self.tab_i + (-1 if ev.key == K.K_PAGEUP else 1)) % len(self.tabs))
             return
-        if alt and not ctrl and ev.key in (K.K_LEFT, K.K_RIGHT, K.K_UP, K.K_DOWN) and len(self.tab.panes()) > 1:
+        if alt and not ctrl and ev.key in (K.K_LEFT, K.K_RIGHT, K.K_UP, K.K_DOWN) and len(self.tab.panes()) > 1 \
+                and not self.hk_off('alt_arrows'):
             self.focus_dir(*{K.K_LEFT: (-1, 0), K.K_RIGHT: (1, 0), K.K_UP: (0, -1), K.K_DOWN: (0, 1)}[ev.key])
             return
-        if ctrl and shift and not alt:
+        if ctrl and shift and not alt and not self.hk_off('ctrl+shift+' + pygame.key.name(ev.key)):
             if self.plugins.emit('key', ev):
                 return
             if self.hotkey(ev.key, mods):
@@ -1110,7 +1119,7 @@ class App:
                     clip_put(t)
                     self.notify('copied %d lines' % (t.count('\n') + 1), 1.2)
                 return
-        if shift and not ctrl:
+        if shift and not ctrl and not self.hk_off('shift_pgup'):
             page = pane.screen.rows - 1
             if ev.key == K.K_PAGEUP:
                 return pane.scroll_view(page)
@@ -1385,6 +1394,8 @@ class App:
             self.panel(vs, r, 225)
             self.draw_text(vs, r.x + cw * 2, r.y + ch // 2, 'PYTERM HOTKEYS', (255, 200, 60), 1)
             for i, (k, d) in enumerate(HELP):
+                if k == 'F11 / Alt+Enter' and not self.cfg.get('alt_enter_fullscreen', True):
+                    k = 'F11'
                 yy = r.y + ch * (i + 2)
                 self.draw_text(vs, r.x + cw * 2, yy, k, (90, 220, 255))
                 self.draw_text(vs, r.x + cw * 27, yy, d, (230, 230, 230))

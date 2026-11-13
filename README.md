@@ -268,8 +268,8 @@ demo shell understands `theme random`, `font random`, `bg random2`, `effect pick
 | Ctrl+Shift+R | record asciinema `.cast` |
 | Ctrl+Shift+K / Z / I / N | fireworks / sine scroller / HUD meter / walkers (plugins) |
 | Shift+PgUp/PgDn, wheel | scrollback |
-| Ctrl+Click | open URL |
-| F11, Alt+Enter | fullscreen |
+| Ctrl+Click | open URL (`ctrl_click_urls: false` to turn off) |
+| F11, Alt+Enter | fullscreen (`alt_enter_fullscreen: false` / `--no-alt-enter` leaves Alt+Enter to the program, e.g. pytermwm) |
 
 ## Performance & power
 
